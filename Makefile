@@ -7,7 +7,7 @@ TOOL = unboxing
 WEB_OUTPUT = web/index.html
 RAYLIB_WEB_LIB = $(HOME)/dev/github.com/raysan5/raylib-5.5/build_web/raylib/libraylib.a
 
-.PHONY: clean web web-serve
+.PHONY: clean web web-serve lsp
 
 unboxing: main.c
 	$(CC) $(CFLAGS) main.c -o $@ $(LIBS)
@@ -29,6 +29,11 @@ web: main.c
 web-serve: web
 	@echo "Starting local server at http://localhost:8787"
 	@cd web && python3 -m http.server 8787
+
+lsp:
+	rm -f compile_commands.json
+	bear -- make clean
+	bear -- make
 
 clean:
 	rm -f $(TOOL)

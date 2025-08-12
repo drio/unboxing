@@ -4,3 +4,4 @@ node_modules
 *.mp4
 web
 unboxing
+.cache/clangd/index
