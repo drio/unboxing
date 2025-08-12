@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Unboxing - 2D Raylib</title>
+	<style>
+		html, body {
+			margin: 0;
+			padding: 0;
+			background: #333;
+			width: 100%;
+			height: 100%;
+			overflow: hidden;
+		}
+
+		canvas {
+			display: block;
+			width: 100vw;
+			height: 100vh;
+		}
+	</style>
+</head>
+
+<body>
+	<canvas id="canvas" oncontextmenu="event.preventDefault()"></canvas>
+	<script>
+		var Module = {
+			canvas: document.getElementById('canvas'),
+			onRuntimeInitialized: function() {
+				// Resize canvas to match viewport
+				function resizeCanvas() {
+					const canvas = Module.canvas;
+					canvas.width = window.innerWidth;
+					canvas.height = window.innerHeight;
+				}
+				
+				resizeCanvas();
+				window.addEventListener('resize', resizeCanvas);
+			}
+		};
+	</script>
+	<script src="index.js"></script>
+</body>
+</html>
