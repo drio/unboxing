@@ -64,7 +64,7 @@ VariantFunction variant_functions[] = {
 const int num_variant_functions = 3;
 
 float random_coeff() {
-    return ((float)rand() / (float)RAND_MAX) * 2.0f - 1.0f; // full [-1,1] range like author
+    return ((float)rand() / (float)RAND_MAX) * 2.0f - 0.8f; // author uses: [-1,1] range 
 }
 
 AffineTransform create_random_transform() {
@@ -93,7 +93,7 @@ void generate_chaos_points(Point* points, int iterations, int num_layers) {
     };
 
     const int settling_iterations = 10; // minimal settling, preserve structure formation
-    
+
     for (int i = 0; i < iterations + settling_iterations; i++) {
         int layer_choice = rand() % num_layers;
         int variant_choice = rand() % num_variant_functions;
@@ -186,8 +186,8 @@ void run_raylib_visualization(Point* points, int point_count) {
 
 int main(void) {
     const int iterations = 1000000; // reduce for WASM compatibility
-    const int layers = 10;
-    const int mode = 1; // 0=print points, 1=visualization, 2=save image
+    const int layers = 7;
+    const int mode = 2; // 0=print points, 1=visualization, 2=save image
 
     Point* points = malloc(iterations * sizeof(Point));
 
