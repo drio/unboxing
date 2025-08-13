@@ -130,21 +130,29 @@ void run_raylib_visualization(Point* points, int point_count) {
     const int screenHeight = 768;
     InitWindow(screenWidth, screenHeight, "Unboxing Algorithm");
 
+    // Pre-render all points to texture once
+    RenderTexture2D fractal_texture = LoadRenderTexture(screenWidth, screenHeight);
+    BeginTextureMode(fractal_texture);
+        ClearBackground(BLACK);
+        for (int i = 0; i < point_count; i++) {
+            int screen_x = (int)((points[i].x + 2.0f) * screenWidth / 4.0f);
+            int screen_y = (int)((points[i].y + 2.0f) * screenHeight / 4.0f);
+
+            if (screen_x >= 0 && screen_x < screenWidth && screen_y >= 0 && screen_y < screenHeight) {
+                Color point_color = map_color(points[i].z);
+                DrawPixel(screen_x, screen_y, point_color);
+            }
+        }
+    EndTextureMode();
+
     SetTargetFPS(60);
 
     while (!WindowShouldClose()) {
         BeginDrawing();
             ClearBackground(BLACK);
 
-            for (int i = 0; i < point_count; i++) {
-                int screen_x = (int)((points[i].x + 2.0f) * screenWidth / 4.0f);
-                int screen_y = (int)((points[i].y + 2.0f) * screenHeight / 4.0f);
-
-                if (screen_x >= 0 && screen_x < screenWidth && screen_y >= 0 && screen_y < screenHeight) {
-                    Color point_color = map_color(points[i].z);
-                    DrawPixel(screen_x, screen_y, point_color);
-                }
-            }
+            // Just draw the pre-rendered texture
+            DrawTexture(fractal_texture.texture, 0, 0, WHITE);
 
             DrawText("Unboxing Fractal", 10, 10, 20, WHITE);
             DrawText("ESC to exit", 10, 40, 16, GRAY);
@@ -153,6 +161,7 @@ void run_raylib_visualization(Point* points, int point_count) {
         EndDrawing();
     }
 
+    UnloadRenderTexture(fractal_texture);
     CloseWindow();
 }
 
