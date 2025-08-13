@@ -1,6 +1,7 @@
 #include "raylib.h"
 #include <math.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 typedef struct {
     float x, y, z;
@@ -107,37 +108,51 @@ void generate_chaos_points(Point* points, int iterations, int num_layers) {
     free(transforms);
 }
 
-int main(void)
-{
-    // Window initialization
+void print_points(Point* points, int point_count) {
+    printf("Generated %d points:\n", point_count);
+    for (int i = 0; i < point_count; i++) {
+        printf("Point %d: (%.3f, %.3f, %.3f) layer=%d variant=%d\n", 
+               i, points[i].x, points[i].y, points[i].z, points[i].layer, points[i].variant);
+    }
+}
+
+void run_raylib_visualization(Point* points, int point_count) {
     const int screenWidth = 800;
     const int screenHeight = 600;
-    InitWindow(screenWidth, screenHeight, "Unboxing - 2D Raylib");
+    InitWindow(screenWidth, screenHeight, "Unboxing Algorithm");
     
     SetTargetFPS(60);
     
-    // Main game loop
-    while (!WindowShouldClose())
-    {
-        // Start drawing
+    while (!WindowShouldClose()) {
         BeginDrawing();
-            ClearBackground(DARKGRAY);
+            ClearBackground(BLACK);
             
-            // Draw a simple rectangle
-            DrawRectangle(screenWidth/2 - 50, screenHeight/2 - 50, 100, 100, RAYWHITE);
-            
-            // Draw some text
-            DrawText("Hello, Unboxing!", 10, 10, 20, LIGHTGRAY);
+            DrawText("Unboxing Fractal", 10, 10, 20, WHITE);
             DrawText("ESC to exit", 10, 40, 16, GRAY);
-            
-            // Draw FPS
             DrawFPS(screenWidth - 80, 10);
             
         EndDrawing();
     }
     
-    // Clean up
     CloseWindow();
+}
+
+int main(void) {
+    const int iterations = 10;
+    const int layers = 2;
+    const int use_visualization = 0;
     
+    Point* points = malloc(iterations * sizeof(Point));
+    
+    srand(42);
+    generate_chaos_points(points, iterations, layers);
+    
+    if (use_visualization) {
+        run_raylib_visualization(points, iterations);
+    } else {
+        print_points(points, iterations);
+    }
+    
+    free(points);
     return 0;
 }
