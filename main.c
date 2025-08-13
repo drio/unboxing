@@ -127,10 +127,11 @@ void print_points(Point* points, int point_count) {
 
 void run_raylib_visualization(Point* points, int point_count) {
     const int screenWidth = 1024;
-    const int screenHeight = 768;
+    const int screenHeight = 1024;
     InitWindow(screenWidth, screenHeight, "Unboxing Algorithm");
 
     // Pre-render all points to texture once
+    // TODO: Optimize with direct pixel buffer manipulation (ImageDrawPixel + LoadTextureFromImage)
     RenderTexture2D fractal_texture = LoadRenderTexture(screenWidth, screenHeight);
     BeginTextureMode(fractal_texture);
         ClearBackground(BLACK);
