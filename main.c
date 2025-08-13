@@ -97,6 +97,7 @@ void generate_chaos_points(Point* points, int iterations, int num_layers) {
         int variant_choice = rand() % num_variant_functions;
 
         float old_z = current.z;
+        current.z = 1.0f; // reset z=1 before transform as in article
         current = apply_affine_transform(current, transforms[layer_choice], layer_choice);
         current = variant_functions[variant_choice].function(current);
         current.z = (current.z + old_z) / 2.0f; // blend color values as in article
@@ -126,8 +127,8 @@ void print_points(Point* points, int point_count) {
 }
 
 void run_raylib_visualization(Point* points, int point_count) {
-    const int screenWidth = 1024;
-    const int screenHeight = 1024;
+    const int screenWidth = 2000;
+    const int screenHeight = 2000;
     InitWindow(screenWidth, screenHeight, "Unboxing Algorithm");
 
     // Pre-render all points to texture once
@@ -167,8 +168,8 @@ void run_raylib_visualization(Point* points, int point_count) {
 }
 
 int main(void) {
-    const int iterations = 10000000;
-    const int layers = 2;
+    const int iterations = 1000000;
+    const int layers = 10;
     const int use_visualization = 1;
 
     Point* points = malloc(iterations * sizeof(Point));
