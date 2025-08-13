@@ -167,4 +167,23 @@ Variant functions handle mathematical "flavoring" (waves, rescaling, etc.)
 
 Random sampling of both creates emergent complexity
 
+### Regarding color
+
+The z-coordinate gets mapped to a color gradient, not grayscale. Let me check
+what the article says about color handling:
+
+From the article, the z-coordinate gets special treatment - there's "weirdness
+with point[3] is me treating colour as special" and they blend it: point[3] =
+(point[3] + z)/2.
+
+Also, they use color palettes like:
+sample_canva2 <- function(seed = NULL, n = 4) {
+  sample(ggthemes::canva_palettes, 1)[[1]] |>
+    (\(x) colorRampPalette(x)(n))()
+}
+
+So instead of grayscale, we should:
+
+1. Map z-values to a color palette (like red → orange → yellow → white)
+2. Handle the z-blending properly in our variant functions
 

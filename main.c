@@ -96,8 +96,10 @@ void generate_chaos_points(Point* points, int iterations, int num_layers) {
         int layer_choice = rand() % num_layers;
         int variant_choice = rand() % num_variant_functions;
 
+        float old_z = current.z;
         current = apply_affine_transform(current, transforms[layer_choice], layer_choice);
         current = variant_functions[variant_choice].function(current);
+        current.z = (current.z + old_z) / 2.0f; // blend color values as in article
 
         current.layer = layer_choice;
         current.variant = variant_choice;
@@ -108,6 +110,14 @@ void generate_chaos_points(Point* points, int iterations, int num_layers) {
     free(transforms);
 }
 
+Color map_color(float z_value) {
+    float t = (z_value + 1.0f) / 3.0f; // map to [0,1] roughly
+    if (t < 0) t = 0;
+    if (t > 1) t = 1;
+    unsigned char intensity = (unsigned char)(t * 255);
+    return (Color){255, intensity, intensity, 255}; // red=255 always, G&B increase: red->pink->white
+}
+
 void print_points(Point* points, int point_count) {
     for (int i = 0; i < point_count; i++) {
         printf("%.3f %.3f %.3f %d %d\n", 
@@ -116,8 +126,8 @@ void print_points(Point* points, int point_count) {
 }
 
 void run_raylib_visualization(Point* points, int point_count) {
-    const int screenWidth = 800;
-    const int screenHeight = 600;
+    const int screenWidth = 1024;
+    const int screenHeight = 768;
     InitWindow(screenWidth, screenHeight, "Unboxing Algorithm");
 
     SetTargetFPS(60);
@@ -125,6 +135,16 @@ void run_raylib_visualization(Point* points, int point_count) {
     while (!WindowShouldClose()) {
         BeginDrawing();
             ClearBackground(BLACK);
+
+            for (int i = 0; i < point_count; i++) {
+                int screen_x = (int)((points[i].x + 2.0f) * screenWidth / 4.0f);
+                int screen_y = (int)((points[i].y + 2.0f) * screenHeight / 4.0f);
+
+                if (screen_x >= 0 && screen_x < screenWidth && screen_y >= 0 && screen_y < screenHeight) {
+                    Color point_color = map_color(points[i].z);
+                    DrawPixel(screen_x, screen_y, point_color);
+                }
+            }
 
             DrawText("Unboxing Fractal", 10, 10, 20, WHITE);
             DrawText("ESC to exit", 10, 40, 16, GRAY);
@@ -137,9 +157,9 @@ void run_raylib_visualization(Point* points, int point_count) {
 }
 
 int main(void) {
-    const int iterations = 1000;
+    const int iterations = 10000000;
     const int layers = 2;
-    const int use_visualization = 0;
+    const int use_visualization = 1;
 
     Point* points = malloc(iterations * sizeof(Point));
 
