@@ -16,9 +16,9 @@ typedef struct {
 } VariantFunction;
 
 typedef struct {
-    float a, b, c;  
-    float d, e, f;  
-    float g, h, i; 
+    float a, b, c;
+    float d, e, f;
+    float g, h, i;
 } AffineTransform;
 
 Point apply_affine_transform(Point p, AffineTransform t, int layer_id) {
@@ -83,36 +83,35 @@ AffineTransform create_random_transform() {
 
 void generate_chaos_points(Point* points, int iterations, int num_layers) {
     AffineTransform* transforms = malloc(num_layers * sizeof(AffineTransform));
-    
+
     for (int i = 0; i < num_layers; i++) {
         transforms[i] = create_random_transform();
     }
-    
+
     Point current = {
         random_coeff(), random_coeff(), random_coeff(), 0, 0
     };
-    
+
     for (int i = 0; i < iterations; i++) {
         int layer_choice = rand() % num_layers;
         int variant_choice = rand() % num_variant_functions;
-        
+
         current = apply_affine_transform(current, transforms[layer_choice], layer_choice);
         current = variant_functions[variant_choice].function(current);
-        
+
         current.layer = layer_choice;
         current.variant = variant_choice;
-        
+
         points[i] = current;
     }
-    
+
     free(transforms);
 }
 
 void print_points(Point* points, int point_count) {
-    printf("Generated %d points:\n", point_count);
     for (int i = 0; i < point_count; i++) {
-        printf("Point %d: (%.3f, %.3f, %.3f) layer=%d variant=%d\n", 
-               i, points[i].x, points[i].y, points[i].z, points[i].layer, points[i].variant);
+        printf("%.3f %.3f %.3f %d %d\n", 
+               points[i].x, points[i].y, points[i].z, points[i].layer, points[i].variant);
     }
 }
 
@@ -120,39 +119,39 @@ void run_raylib_visualization(Point* points, int point_count) {
     const int screenWidth = 800;
     const int screenHeight = 600;
     InitWindow(screenWidth, screenHeight, "Unboxing Algorithm");
-    
+
     SetTargetFPS(60);
-    
+
     while (!WindowShouldClose()) {
         BeginDrawing();
             ClearBackground(BLACK);
-            
+
             DrawText("Unboxing Fractal", 10, 10, 20, WHITE);
             DrawText("ESC to exit", 10, 40, 16, GRAY);
             DrawFPS(screenWidth - 80, 10);
-            
+
         EndDrawing();
     }
-    
+
     CloseWindow();
 }
 
 int main(void) {
-    const int iterations = 10;
+    const int iterations = 1000;
     const int layers = 2;
     const int use_visualization = 0;
-    
+
     Point* points = malloc(iterations * sizeof(Point));
-    
+
     srand(42);
     generate_chaos_points(points, iterations, layers);
-    
+
     if (use_visualization) {
         run_raylib_visualization(points, iterations);
     } else {
         print_points(points, iterations);
     }
-    
+
     free(points);
     return 0;
 }
