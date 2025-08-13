@@ -5,3 +5,4 @@ node_modules
 web
 unboxing
 .cache/clangd/index
+prompts.txt
