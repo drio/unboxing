@@ -64,7 +64,7 @@ VariantFunction variant_functions[] = {
 const int num_variant_functions = 3;
 
 float random_coeff() {
-    return (((float)rand() / (float)RAND_MAX) * 2.0f - 1.0f) * 0.5f; // smaller range for more localized patterns
+    return ((float)rand() / (float)RAND_MAX) * 2.0f - 1.0f; // full [-1,1] range like author
 }
 
 AffineTransform create_random_transform() {
@@ -92,7 +92,7 @@ void generate_chaos_points(Point* points, int iterations, int num_layers) {
         0.0f, 0.0f, 0.0f, 0, 0
     };
 
-    const int settling_iterations = 100; // skip initial chaos, let system settle
+    const int settling_iterations = 10; // minimal settling, preserve structure formation
     
     for (int i = 0; i < iterations + settling_iterations; i++) {
         int layer_choice = rand() % num_layers;
@@ -131,26 +131,38 @@ void print_points(Point* points, int point_count) {
     }
 }
 
+Image create_fractal_image(Point* points, int point_count, int width, int height) {
+    Image fractal_image = GenImageColor(width, height, BLACK);
+    
+    for (int i = 0; i < point_count; i++) {
+        int screen_x = (int)((points[i].x + 2.0f) * width / 4.0f);
+        int screen_y = (int)((points[i].y + 2.0f) * height / 4.0f);
+
+        if (screen_x >= 0 && screen_x < width && screen_y >= 0 && screen_y < height) {
+            Color point_color = map_color(points[i].z);
+            ImageDrawPixel(&fractal_image, screen_x, screen_y, point_color);
+        }
+    }
+    
+    return fractal_image;
+}
+
+void save_image(Point* points, int point_count, const char* filename) {
+    Image fractal_image = create_fractal_image(points, point_count, 2000, 2000);
+    ExportImage(fractal_image, filename);
+    UnloadImage(fractal_image);
+    printf("Image saved to %s\n", filename);
+}
+
 void run_raylib_visualization(Point* points, int point_count) {
     const int screenWidth = 2000;
     const int screenHeight = 2000;
     InitWindow(screenWidth, screenHeight, "Unboxing Algorithm");
 
-    // Pre-render all points to texture once
-    // TODO: Optimize with direct pixel buffer manipulation (ImageDrawPixel + LoadTextureFromImage)
-    RenderTexture2D fractal_texture = LoadRenderTexture(screenWidth, screenHeight);
-    BeginTextureMode(fractal_texture);
-        ClearBackground(BLACK);
-        for (int i = 0; i < point_count; i++) {
-            int screen_x = (int)((points[i].x + 2.0f) * screenWidth / 4.0f);
-            int screen_y = (int)((points[i].y + 2.0f) * screenHeight / 4.0f);
-
-            if (screen_x >= 0 && screen_x < screenWidth && screen_y >= 0 && screen_y < screenHeight) {
-                Color point_color = map_color(points[i].z);
-                DrawPixel(screen_x, screen_y, point_color);
-            }
-        }
-    EndTextureMode();
+    // Create fractal image and convert to texture
+    Image fractal_image = create_fractal_image(points, point_count, screenWidth, screenHeight);
+    Texture2D fractal_texture = LoadTextureFromImage(fractal_image);
+    UnloadImage(fractal_image);
 
     SetTargetFPS(60);
 
@@ -159,7 +171,7 @@ void run_raylib_visualization(Point* points, int point_count) {
             ClearBackground(BLACK);
 
             // Just draw the pre-rendered texture
-            DrawTexture(fractal_texture.texture, 0, 0, WHITE);
+            DrawTexture(fractal_texture, 0, 0, WHITE);
 
             DrawText("Unboxing Fractal", 10, 10, 20, WHITE);
             DrawText("ESC to exit", 10, 40, 16, GRAY);
@@ -168,22 +180,24 @@ void run_raylib_visualization(Point* points, int point_count) {
         EndDrawing();
     }
 
-    UnloadRenderTexture(fractal_texture);
+    UnloadTexture(fractal_texture);
     CloseWindow();
 }
 
 int main(void) {
-    const int iterations = 10000000;
+    const int iterations = 1000000; // reduce for WASM compatibility
     const int layers = 10;
-    const int use_visualization = 1;
+    const int mode = 1; // 0=print points, 1=visualization, 2=save image
 
     Point* points = malloc(iterations * sizeof(Point));
 
-    srand(42);
+    srand(123);
     generate_chaos_points(points, iterations, layers);
 
-    if (use_visualization) {
+    if (mode == 1) {
         run_raylib_visualization(points, iterations);
+    } else if (mode == 2) {
+        save_image(points, iterations, "fractal.png");
     } else {
         print_points(points, iterations);
     }

@@ -187,3 +187,49 @@ So instead of grayscale, we should:
 1. Map z-values to a color palette (like red → orange → yellow → white)
 2. Handle the z-blending properly in our variant functions
 
+### Thigns that affect the most the output of the algorithm
+
+1. Random Seed (Biggest Impact)
+
+- What: srand(42) - determines all random coefficients
+- Impact: Completely different fractal for each seed
+- Why: Everything depends on the randomly generated transform matrices
+
+2. Coefficient Range (Structure Control)
+
+- What: 0.8f multiplier in random_coeff()
+- Impact: Controls chaos vs structure balance
+- Why: Too large = scattered noise, too small = loss of detail
+- Sweet spot: We found 0.6-0.8 works well
+
+3. Number of Layers (Pattern Complexity)
+
+- What: Currently 7 layers
+- Impact: More layers = more complex, varied patterns
+- Why: Each layer is a different affine transformation, more = richer combinations
+
+4. Variant Functions (Pattern Type)
+
+- What: Sine, double sine, rescaling functions
+- Impact: Defines the characteristic "unboxing" look
+- Why: Sine creates boxes (bounded [-1,1]), rescaling creates "bursting"
+
+5. Starting Point (Convergence Pattern)
+
+- What: Origin (0,0,0) vs random start
+- Impact: Affects how patterns emerge and cluster
+- Why: Determines initial trajectory toward attractors
+
+6. Number of Iterations (Detail Level)
+
+- What: Currently 10M points
+- Impact: More = smoother, finer detail
+- Why: Higher density reveals more fractal structure
+
+Lower Impact:
+
+- Z-coordinate blending (affects color, not structure)
+- Settling iterations (minor cleanup)
+- Color mapping (visual only)
+
+The top 3 (seed, coefficient range, layers) probably account for 80% of the visual variation.
