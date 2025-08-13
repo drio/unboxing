@@ -64,7 +64,7 @@ VariantFunction variant_functions[] = {
 const int num_variant_functions = 3;
 
 float random_coeff() {
-    return ((float)rand() / (float)RAND_MAX) * 2.0f - 1.0f;
+    return (((float)rand() / (float)RAND_MAX) * 2.0f - 1.0f) * 0.5f; // smaller range for more localized patterns
 }
 
 AffineTransform create_random_transform() {
@@ -89,10 +89,12 @@ void generate_chaos_points(Point* points, int iterations, int num_layers) {
     }
 
     Point current = {
-        random_coeff(), random_coeff(), random_coeff(), 0, 0
+        0.0f, 0.0f, 0.0f, 0, 0
     };
 
-    for (int i = 0; i < iterations; i++) {
+    const int settling_iterations = 100; // skip initial chaos, let system settle
+    
+    for (int i = 0; i < iterations + settling_iterations; i++) {
         int layer_choice = rand() % num_layers;
         int variant_choice = rand() % num_variant_functions;
 
@@ -105,7 +107,10 @@ void generate_chaos_points(Point* points, int iterations, int num_layers) {
         current.layer = layer_choice;
         current.variant = variant_choice;
 
-        points[i] = current;
+        // only save points after settling period
+        if (i >= settling_iterations) {
+            points[i - settling_iterations] = current;
+        }
     }
 
     free(transforms);
@@ -168,7 +173,7 @@ void run_raylib_visualization(Point* points, int point_count) {
 }
 
 int main(void) {
-    const int iterations = 1000000;
+    const int iterations = 10000000;
     const int layers = 10;
     const int use_visualization = 1;
 
