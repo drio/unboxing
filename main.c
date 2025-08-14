@@ -35,7 +35,7 @@ Point sine_variant(Point p) {
     Point result;
     result.x = sinf(p.x);
     result.y = sinf(p.y);
-    result.z = sinf(p.z);
+    result.z = sinf(p.z) + 1.0f;
     return result;
 }
 
@@ -43,7 +43,7 @@ Point double_sine_variant(Point p) {
     Point result;
     result.x = 2.0f * sinf(p.x);
     result.y = 2.0f * sinf(p.y);
-    result.z = 2.0f * sinf(p.z);
+    result.z = 2.0f * (sinf(p.z) + 1.0f);
     return result;
 }
 
@@ -52,8 +52,9 @@ Point rescaling_variant(Point p) {
     float s = powf(p.x*p.x + p.y*p.y + p.z*p.z, 1.0f/3.0f);
     result.x = p.x + s;
     result.y = p.y + s;
-    result.z = p.z + s;
+    result.z = fabsf(p.z + s); // Use absolute value
     return result;
+
 }
 
 VariantFunction variant_functions[] = {
@@ -64,7 +65,7 @@ VariantFunction variant_functions[] = {
 const int num_variant_functions = 3;
 
 float random_coeff() {
-    return ((float)rand() / (float)RAND_MAX) * 2.0f - 0.8f; // author uses: [-1,1] range 
+    return ((float)rand() / (float)RAND_MAX) * 2.0f - 1.0f; 
 }
 
 AffineTransform create_random_transform() {
@@ -187,11 +188,12 @@ void run_raylib_visualization(Point* points, int point_count) {
 int main(void) {
     const int iterations = 1000000; // reduce for WASM compatibility
     const int layers = 7;
-    const int mode = 2; // 0=print points, 1=visualization, 2=save image
+    const int mode = 1; // 0=print points, 1=visualization, 2=save image
+    const int seed = 156;
 
     Point* points = malloc(iterations * sizeof(Point));
 
-    srand(123);
+    srand(seed);
     generate_chaos_points(points, iterations, layers);
 
     if (mode == 1) {
