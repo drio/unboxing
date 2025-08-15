@@ -82,12 +82,22 @@ AffineTransform create_random_transform() {
     return t;
 }
 
+
+void print_matrix(AffineTransform* m) {
+    printf("%.6f %.6f %.6f\n", m[0].a, m[0].b, m[0].c);
+    printf("%.6f %.6f %.6f\n", m[0].d, m[0].e, m[0].f);
+    printf("%.6f %.6f %.6f\n", m[0].g, m[0].h, m[0].i);
+    printf("\n");
+}
+
+
 void generate_chaos_points(Point* points, int iterations, int num_layers) {
     AffineTransform* transforms = malloc(num_layers * sizeof(AffineTransform));
 
     for (int i = 0; i < num_layers; i++) {
         transforms[i] = create_random_transform();
     }
+    print_matrix(&transforms[0]);
 
     Point current = {
         0.0f, 0.0f, 0.0f, 0, 0
@@ -186,10 +196,10 @@ void run_raylib_visualization(Point* points, int point_count) {
 }
 
 int main(void) {
-    const int iterations = 1000000; // reduce for WASM compatibility
-    const int layers = 7;
-    const int mode = 1; // 0=print points, 1=visualization, 2=save image
-    const int seed = 156;
+    const int iterations = 10; // reduce for WASM compatibility
+    const int layers = 1;
+    const int mode = 0; // 0=print points, 1=visualization, 2=save image
+    const int seed = 333;
 
     Point* points = malloc(iterations * sizeof(Point));
 
