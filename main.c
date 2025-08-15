@@ -97,7 +97,7 @@ void generate_chaos_points(Point* points, int iterations, int num_layers) {
     for (int i = 0; i < num_layers; i++) {
         transforms[i] = create_random_transform();
     }
-    print_matrix(&transforms[0]);
+    // print_matrix(&transforms[0]);
 
     Point current = {
         0.0f, 0.0f, 0.0f, 0, 0
