@@ -2,6 +2,7 @@
 #include <math.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <time.h>
 
 typedef struct {
     float x, y, z;
@@ -110,7 +111,7 @@ void generate_chaos_points(Point* points, int iterations, int num_layers) {
         int variant_choice = rand() % num_variant_functions;
 
         float old_z = current.z;
-        current.z = 1.0f; // reset z=1 before transform as in article
+        // current.z = 1.0f; // reset z=1 before transform as in article
         current = apply_affine_transform(current, transforms[layer_choice], layer_choice);
         current = variant_functions[variant_choice].function(current);
         current.z = (current.z + old_z) / 2.0f; // blend color values as in article
@@ -144,7 +145,8 @@ void print_points(Point* points, int point_count) {
 
 Image create_fractal_image(Point* points, int point_count, int width, int height) {
     Image fractal_image = GenImageColor(width, height, BLACK);
-    
+
+    int out = 0;
     for (int i = 0; i < point_count; i++) {
         int screen_x = (int)((points[i].x + 2.0f) * width / 4.0f);
         int screen_y = (int)((points[i].y + 2.0f) * height / 4.0f);
@@ -152,8 +154,11 @@ Image create_fractal_image(Point* points, int point_count, int width, int height
         if (screen_x >= 0 && screen_x < width && screen_y >= 0 && screen_y < height) {
             Color point_color = map_color(points[i].z);
             ImageDrawPixel(&fractal_image, screen_x, screen_y, point_color);
+        } else {
+            out += 1;
         }
     }
+    printf("create_fractal_image(): out screen points = %d\n", out);
     
     return fractal_image;
 }
@@ -166,8 +171,8 @@ void save_image(Point* points, int point_count, const char* filename) {
 }
 
 void run_raylib_visualization(Point* points, int point_count) {
-    const int screenWidth = 2000;
-    const int screenHeight = 2000;
+    const int screenWidth = 1000;
+    const int screenHeight = 1000;
     InitWindow(screenWidth, screenHeight, "Unboxing Algorithm");
 
     // Create fractal image and convert to texture
@@ -196,14 +201,14 @@ void run_raylib_visualization(Point* points, int point_count) {
 }
 
 int main(void) {
-    const int iterations = 10; // reduce for WASM compatibility
-    const int layers = 1;
-    const int mode = 0; // 0=print points, 1=visualization, 2=save image
-    const int seed = 333;
+    const int iterations = 1000000; // reduce for WASM compatibility
+    const int layers = 5;
+    const int mode = 1; // 0=print points, 1=visualization, 2=save image
+    //const int seed = 123;
 
     Point* points = malloc(iterations * sizeof(Point));
 
-    srand(seed);
+    srand(time(NULL)); 
     generate_chaos_points(points, iterations, layers);
 
     if (mode == 1) {

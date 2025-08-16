@@ -7,7 +7,7 @@ unboxer_base <- function(iterations, layers, seed = NULL) {
     data = runif(9 * layers, min = -1, max = 1), 
     dim = c(3, 3, layers)
   )
-  print(coeffs)
+  #print(coeffs)
   
   # list of variant functions, g_j
   funs <- list(
@@ -35,9 +35,9 @@ unboxer_base <- function(iterations, layers, seed = NULL) {
   )
   
   # sample points
-  # layer_ind <- sample(layers, iterations, replace = TRUE)  
-  # trans_ind <- sample(length(funs), iterations, replace = TRUE)  
-  # points <- accumulate2(layer_ind, trans_ind, update, .init = point0)
+  layer_ind <- sample(layers, iterations, replace = TRUE)  
+  trans_ind <- sample(length(funs), iterations, replace = TRUE)  
+  points <- accumulate2(layer_ind, trans_ind, update, .init = point0)
   
   # tidy up, add columns, and return
   # points <- cbind(
