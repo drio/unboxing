@@ -104,9 +104,7 @@ void generate_chaos_points(Point* points, int iterations, int num_layers) {
         0.0f, 0.0f, 0.0f, 0, 0
     };
 
-    const int settling_iterations = 10; // minimal settling, preserve structure formation
-
-    for (int i = 0; i < iterations + settling_iterations; i++) {
+    for (int i = 0; i < iterations; i++) {
         int layer_choice = rand() % num_layers;
         int variant_choice = rand() % num_variant_functions;
 
@@ -118,11 +116,6 @@ void generate_chaos_points(Point* points, int iterations, int num_layers) {
 
         current.layer = layer_choice;
         current.variant = variant_choice;
-
-        // only save points after settling period
-        if (i >= settling_iterations) {
-            points[i - settling_iterations] = current;
-        }
     }
 
     free(transforms);
