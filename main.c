@@ -271,13 +271,13 @@ int get_canvas_height() {
 
 int main(void) {
     cfg = (Config){
-        .iterations = 10000000,
+        .iterations = 5000000,
         .layers = 9,
-        .mode = 1,
-        .palette = PALETTE_R_DEFAULT,
+        .mode = 2,
+        .palette = PALETTE_RED_TO_PINK,
         .width = 2000,
         .height = 2000,
-        .background = LIGHT_GREY
+        .background = BLACK,
     };
     
     Point* points = malloc(cfg.iterations * sizeof(Point));
