@@ -269,7 +269,7 @@ int get_canvas_height() {
     return cfg.height;
 }
 
-unsigned char* generate_fractal_pixels(int iterations, int layers, int palette_type, int width, int height, int bg_r, int bg_g, int bg_b) {
+unsigned char* generate_fractal_pixels(int iterations, int layers, int palette_type, int width, int height, int bg_r, int bg_g, int bg_b, int seed) {
     Config fractal_cfg = {
         .iterations = iterations,
         .layers = layers,
@@ -281,6 +281,7 @@ unsigned char* generate_fractal_pixels(int iterations, int layers, int palette_t
     };
     
     Point* points = malloc(fractal_cfg.iterations * sizeof(Point));
+    srand(seed);
     generate_chaos_points(points, &fractal_cfg);
     
     size_t pixel_count = width * height * 4; // RGBA

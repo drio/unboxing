@@ -4233,7 +4233,7 @@ var _emscripten_stack_get_current = makeInvalidEarlyAccess('_emscripten_stack_ge
 function assignWasmExports(wasmExports) {
   _malloc = createExportWrapper('malloc', 1);
   _free = createExportWrapper('free', 1);
-  Module['_generate_fractal_pixels'] = _generate_fractal_pixels = createExportWrapper('generate_fractal_pixels', 8);
+  Module['_generate_fractal_pixels'] = _generate_fractal_pixels = createExportWrapper('generate_fractal_pixels', 9);
   Module['_free_pixel_data'] = _free_pixel_data = createExportWrapper('free_pixel_data', 1);
   Module['_main'] = _main = createExportWrapper('main', 2);
   _fflush = createExportWrapper('fflush', 1);

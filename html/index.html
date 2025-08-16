@@ -47,6 +47,9 @@
 			console.log('Generating fractal with config:', config);
 
 			try {
+				const seed = Math.floor(Math.random() * 1000000);
+				console.log('Using seed:', seed);
+				
 				const pixelDataPtr = Module._generate_fractal_pixels(
 					config.iterations,
 					config.layers,
@@ -55,7 +58,8 @@
 					config.height,
 					config.background.r,
 					config.background.g,
-					config.background.b
+					config.background.b,
+					seed
 				);
 
 				console.log("Got fractal pixels at pointer:", pixelDataPtr);
