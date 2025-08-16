@@ -147,8 +147,8 @@ Image create_fractal_image(Point* points, int point_count, int width, int height
 
     int out = 0;
     for (int i = 0; i < point_count; i++) {
-        int screen_x = (int)((points[i].x + 2.0f) * width / 4.0f);
-        int screen_y = (int)((points[i].y + 2.0f) * height / 4.0f);
+        int screen_x = (int)((points[i].x + 4.0f) * width / 8.0f);
+        int screen_y = height - (int)((points[i].y + 4.0f) * height / 8.0f);  // Flip Y
 
         if (screen_x >= 0 && screen_x < width && screen_y >= 0 && screen_y < height) {
             Color point_color = map_color(points[i].z);
@@ -200,8 +200,8 @@ void run_raylib_visualization(Point* points, int point_count) {
 }
 
 int main(void) {
-    const int iterations = 100000; // reduce for WASM compatibility
-    const int layers = 5;
+    const int iterations = 1000000; // reduce for WASM compatibility
+    const int layers = 7;
     const int mode = 1; // 0=print points, 1=visualization, 2=save image
     //const int seed = 123;
 
