@@ -11,7 +11,6 @@ conda create -n r-env r-essentials r-base
 conda activate r-env
 ```
 
-
 ### References
 
 1. https://blog.djnavarro.net/posts/2024-12-22_art-from-code-5/
