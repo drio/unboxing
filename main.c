@@ -48,6 +48,9 @@ typedef struct {
     Color background;
 } Config;
 
+// Global config instance
+Config cfg;
+
 Point apply_affine_transform(Point p, AffineTransform t, int layer_id) {
     Point result;
     // R does: point %*% matrix (row vector × matrix)
@@ -258,14 +261,22 @@ void run_raylib_visualization(Point* points, int point_count, Config* cfg) {
     CloseWindow();
 }
 
+int get_canvas_width() {
+    return cfg.width;
+}
+
+int get_canvas_height() {
+    return cfg.height;
+}
+
 int main(void) {
-    Config cfg = {
-        .iterations = 500000,
-        .layers = 20,
+    cfg = (Config){
+        .iterations = 10000000,
+        .layers = 9,
         .mode = 1,
         .palette = PALETTE_R_DEFAULT,
-        .width = 1000,
-        .height = 1000,
+        .width = 2000,
+        .height = 2000,
         .background = LIGHT_GREY
     };
     

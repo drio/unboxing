@@ -1,5 +1,5 @@
 CC = clang
-CFLAGS = -Wall -std=c99 -I$(HOME)/dev/github.com/raysan5/raylib-5.5/src
+CFLAGS = -Wall -Wno-unused-variable -std=c99 -I$(HOME)/dev/github.com/raysan5/raylib-5.5/src
 LIBS = -L$(HOME)/dev/github.com/raysan5/raylib-5.5/src -lraylib -lm -lpthread -ldl -lrt -lX11
 TOOL = unboxing
 
@@ -17,10 +17,13 @@ web: main.c
 	mkdir -p web
 	emcc main.c $(RAYLIB_WEB_LIB) -o $(WEB_OUTPUT) \
 		-Os -Wall \
+		-Wno-unused-variable \
 		-s USE_GLFW=3 \
 		-s ASYNCIFY \
-		-s TOTAL_MEMORY=67108864 \
+		-s TOTAL_MEMORY=1GB \
 		-s FORCE_FILESYSTEM=1 \
+		-s EXPORTED_FUNCTIONS='["_main","_get_canvas_width","_get_canvas_height"]' \
+		-s EXPORTED_RUNTIME_METHODS='["ccall","cwrap"]' \
 		-DPLATFORM_WEB \
 		-I $(HOME)/dev/github.com/raysan5/raylib-5.5/src
 	cp html/index.html web/

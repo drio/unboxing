@@ -11,12 +11,14 @@
 			width: 100%;
 			height: 100%;
 			overflow: hidden;
+			display: flex;
+			justify-content: center;
+			align-items: center;
 		}
 
 		canvas {
 			display: block;
-			width: 100vw;
-			height: 100vh;
+			border: 1px solid #666;
 		}
 	</style>
 </head>
@@ -27,15 +29,27 @@
 		var Module = {
 			canvas: document.getElementById('canvas'),
 			onRuntimeInitialized: function() {
-				// Resize canvas to match viewport
-				function resizeCanvas() {
-					const canvas = Module.canvas;
-					canvas.width = window.innerWidth;
-					canvas.height = window.innerHeight;
+				// Set canvas size from WASM module
+				const canvas = Module.canvas;
+				let width = 1000;  // fallback
+				let height = 1000; // fallback
+				
+				try {
+					if (Module._get_canvas_width && Module._get_canvas_height) {
+						width = Module._get_canvas_width();
+						height = Module._get_canvas_height();
+						console.log('Got canvas size from WASM:', width, 'x', height);
+					} else {
+						console.log('WASM functions not available, using fallback size');
+					}
+				} catch (e) {
+					console.error('Error calling WASM functions:', e);
 				}
 				
-				resizeCanvas();
-				window.addEventListener('resize', resizeCanvas);
+				canvas.width = width;
+				canvas.height = height;
+				canvas.style.width = width + 'px';
+				canvas.style.height = height + 'px';
 			}
 		};
 	</script>
