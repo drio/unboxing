@@ -330,11 +330,11 @@ int main(void) {
     cfg = (Config){
         .iterations = 5000000,
         .layers = 7,
-        .mode = 1,
-        .palette = PALETTE_GREY,
+        .mode = 2,
+        .palette = PALETTE_R_DEFAULT,
         .width = 2000,
         .height = 2000,
-        .background = BLACK,
+        .background = LIGHT_GREY,
     };
     
     Point* points = malloc(cfg.iterations * sizeof(Point));

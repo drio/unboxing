@@ -3,6 +3,7 @@
 A C (and webassembly) version of Danielle Navarro's [unboxing](https://blog.djnavarro.net/posts/2024-12-22_art-from-code-5/).
 
 <img src="imgs/fractal.png" width="600px"/>
+<img src="imgs/fractal.r.png" width="600px"/>
 
 ### Load R env (for running the R version)
 
