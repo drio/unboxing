@@ -269,7 +269,60 @@ int get_canvas_height() {
     return cfg.height;
 }
 
+unsigned char* generate_fractal_pixels(int iterations, int layers, int palette_type, int width, int height, int bg_r, int bg_g, int bg_b) {
+    Config fractal_cfg = {
+        .iterations = iterations,
+        .layers = layers,
+        .mode = 1,
+        .palette = (PaletteType)palette_type,
+        .width = width,
+        .height = height,
+        .background = (Color){bg_r, bg_g, bg_b, 255}
+    };
+    
+    Point* points = malloc(fractal_cfg.iterations * sizeof(Point));
+    generate_chaos_points(points, &fractal_cfg);
+    
+    size_t pixel_count = width * height * 4; // RGBA
+    unsigned char* pixels = malloc(pixel_count);
+    
+    // Initialize with background color
+    for (int i = 0; i < width * height; i++) {
+        pixels[i * 4 + 0] = bg_r;     // R
+        pixels[i * 4 + 1] = bg_g;     // G
+        pixels[i * 4 + 2] = bg_b;     // B
+        pixels[i * 4 + 3] = 255;      // A
+    }
+    
+    // Plot fractal points
+    for (int i = 0; i < fractal_cfg.iterations; i++) {
+        int screen_x = (int)((points[i].x + 4.0f) * width / 8.0f);
+        int screen_y = height - (int)((points[i].y + 4.0f) * height / 8.0f);  // Flip Y
+        
+        if (screen_x >= 0 && screen_x < width && screen_y >= 0 && screen_y < height) {
+            Color point_color = map_color(points[i].z, fractal_cfg.palette);
+            int pixel_index = (screen_y * width + screen_x) * 4;
+            pixels[pixel_index + 0] = point_color.r;
+            pixels[pixel_index + 1] = point_color.g;
+            pixels[pixel_index + 2] = point_color.b;
+            pixels[pixel_index + 3] = point_color.a;
+        }
+    }
+    
+    free(points);
+    return pixels;
+}
+
+void free_pixel_data(unsigned char* pixels) {
+    free(pixels);
+}
+
 int main(void) {
+#ifdef PLATFORM_WEB
+    // In web mode, do nothing - let JS control everything
+    printf("WASM module loaded, ready for JS calls\n");
+    return 0;
+#else
     cfg = (Config){
         .iterations = 5000000,
         .layers = 9,
@@ -295,4 +348,5 @@ int main(void) {
 
     free(points);
     return 0;
+#endif
 }

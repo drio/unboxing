@@ -22,8 +22,8 @@ web: main.c
 		-s ASYNCIFY \
 		-s TOTAL_MEMORY=1GB \
 		-s FORCE_FILESYSTEM=1 \
-		-s EXPORTED_FUNCTIONS='["_main","_get_canvas_width","_get_canvas_height"]' \
-		-s EXPORTED_RUNTIME_METHODS='["ccall","cwrap"]' \
+		-s EXPORTED_FUNCTIONS='["_main","_get_canvas_width","_get_canvas_height","_generate_fractal_pixels","_free_pixel_data"]' \
+		-s EXPORTED_RUNTIME_METHODS='["ccall","cwrap","HEAPU8"]' \
 		-DPLATFORM_WEB \
 		-I $(HOME)/dev/github.com/raysan5/raylib-5.5/src
 	cp html/index.html web/
