@@ -27,8 +27,16 @@ typedef enum {
     PALETTE_BLUE_OCEAN,
     PALETTE_GREEN_FOREST,
     PALETTE_PURPLE_DREAM,
-    PALETTE_RAINBOW
+    PALETTE_RAINBOW,
+    PALETTE_R_DEFAULT
 } PaletteType;
+
+// Color constants
+static const Color LIGHT_GREY = {240, 240, 240, 255};
+static const Color DARK_GREY = {60, 60, 60, 255};
+static const Color CREAM = {245, 245, 220, 255};
+static const Color DARK_BLUE = {25, 25, 112, 255};
+static const Color FOREST_GREEN = {34, 139, 34, 255};
 
 typedef struct {
     int iterations;
@@ -175,6 +183,14 @@ Color map_color(float z_value, PaletteType palette) {
                 return (Color){0, (unsigned char)(255 * (1 - (t-0.6f)*5)), 255, 255}; // Blue
             }
             
+        case PALETTE_R_DEFAULT:
+            // R-style: light grey background with dark points
+            // Higher t values = darker points (inverted from others)
+            {
+                unsigned char darkness = (unsigned char)(t * 120); // Range 0-120 for subtle darkness
+                return (Color){darkness, darkness, darkness, 255};
+            }
+            
         default:
             return (Color){255, intensity, intensity, 255};
     }
@@ -244,13 +260,13 @@ void run_raylib_visualization(Point* points, int point_count, Config* cfg) {
 
 int main(void) {
     Config cfg = {
-        .iterations = 1000000,
-        .layers = 7,
+        .iterations = 500000,
+        .layers = 20,
         .mode = 1,
-        .palette = PALETTE_RAINBOW,
+        .palette = PALETTE_R_DEFAULT,
         .width = 1000,
         .height = 1000,
-        .background = BLACK
+        .background = LIGHT_GREY
     };
     
     Point* points = malloc(cfg.iterations * sizeof(Point));
