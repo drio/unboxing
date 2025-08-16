@@ -28,7 +28,8 @@ typedef enum {
     PALETTE_GREEN_FOREST,
     PALETTE_PURPLE_DREAM,
     PALETTE_RAINBOW,
-    PALETTE_R_DEFAULT
+    PALETTE_R_DEFAULT,
+    PALETTE_GREY,
 } PaletteType;
 
 // Color constants
@@ -163,6 +164,8 @@ Color map_color(float z_value, PaletteType palette) {
     unsigned char intensity = (unsigned char)(t * 255);
     
     switch(palette) {
+        case PALETTE_GREY:
+            return DARK_GREY;
         case PALETTE_RED_TO_PINK:
             return (Color){255, intensity, intensity, 255};
             
@@ -326,9 +329,9 @@ int main(void) {
 #else
     cfg = (Config){
         .iterations = 5000000,
-        .layers = 9,
+        .layers = 7,
         .mode = 1,
-        .palette = PALETTE_RED_TO_PINK,
+        .palette = PALETTE_GREY,
         .width = 2000,
         .height = 2000,
         .background = BLACK,
