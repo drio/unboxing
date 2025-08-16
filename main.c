@@ -30,6 +30,7 @@ typedef enum {
     PALETTE_RAINBOW,
     PALETTE_R_DEFAULT,
     PALETTE_GREY,
+    PALETTE_EXPERIMENT, 
 } PaletteType;
 
 // Color constants
@@ -162,22 +163,24 @@ Color map_color(float z_value, PaletteType palette) {
     if (t < 0) t = 0;
     if (t > .8) t = .8;
     unsigned char intensity = (unsigned char)(t * 255);
-    
+
     switch(palette) {
+        case PALETTE_EXPERIMENT:
+            return (Color){255, 1-intensity, intensity, 128};
         case PALETTE_GREY:
             return DARK_GREY;
         case PALETTE_RED_TO_PINK:
             return (Color){255, intensity, intensity, 255};
-            
+
         case PALETTE_BLUE_OCEAN:
             return (Color){intensity/3, intensity/2, 255, 255};
-            
+
         case PALETTE_GREEN_FOREST:
             return (Color){intensity/4, 255, intensity/2, 255};
-            
+
         case PALETTE_PURPLE_DREAM:
             return (Color){255, intensity/3, 255, 255};
-            
+
         case PALETTE_RAINBOW:
             if (t < 0.2f) {
                 return (Color){255, (unsigned char)(t * 1275), 0, 255}; // Red to Orange
@@ -188,7 +191,7 @@ Color map_color(float z_value, PaletteType palette) {
             } else {
                 return (Color){0, (unsigned char)(255 * (1 - (t-0.6f)*5)), 255, 255}; // Blue
             }
-            
+
         case PALETTE_R_DEFAULT:
             // R-style: light grey background with dark points
             // Higher t values = darker points (inverted from others)
@@ -196,7 +199,7 @@ Color map_color(float z_value, PaletteType palette) {
                 unsigned char darkness = (unsigned char)(t * 120); // Range 0-120 for subtle darkness
                 return (Color){darkness, darkness, darkness, 255};
             }
-            
+
         default:
             return (Color){255, intensity, intensity, 255};
     }
@@ -225,7 +228,7 @@ Image create_fractal_image(Point* points, int point_count, Config* cfg) {
         }
     }
     printf("create_fractal_image(): out screen points = %d\n", out);
-    
+
     return fractal_image;
 }
 
@@ -282,14 +285,14 @@ unsigned char* generate_fractal_pixels(int iterations, int layers, int palette_t
         .height = height,
         .background = (Color){bg_r, bg_g, bg_b, 255}
     };
-    
+
     Point* points = malloc(fractal_cfg.iterations * sizeof(Point));
     srand(seed);
     generate_chaos_points(points, &fractal_cfg);
-    
+
     size_t pixel_count = width * height * 4; // RGBA
     unsigned char* pixels = malloc(pixel_count);
-    
+
     // Initialize with background color
     for (int i = 0; i < width * height; i++) {
         pixels[i * 4 + 0] = bg_r;     // R
@@ -297,12 +300,12 @@ unsigned char* generate_fractal_pixels(int iterations, int layers, int palette_t
         pixels[i * 4 + 2] = bg_b;     // B
         pixels[i * 4 + 3] = 255;      // A
     }
-    
+
     // Plot fractal points
     for (int i = 0; i < fractal_cfg.iterations; i++) {
         int screen_x = (int)((points[i].x + 4.0f) * width / 8.0f);
         int screen_y = height - (int)((points[i].y + 4.0f) * height / 8.0f);  // Flip Y
-        
+
         if (screen_x >= 0 && screen_x < width && screen_y >= 0 && screen_y < height) {
             Color point_color = map_color(points[i].z, fractal_cfg.palette);
             int pixel_index = (screen_y * width + screen_x) * 4;
@@ -312,7 +315,7 @@ unsigned char* generate_fractal_pixels(int iterations, int layers, int palette_t
             pixels[pixel_index + 3] = point_color.a;
         }
     }
-    
+
     free(points);
     return pixels;
 }
@@ -328,15 +331,15 @@ int main(void) {
     return 0;
 #else
     cfg = (Config){
-        .iterations = 5000000,
+        .iterations = 20000000,
         .layers = 7,
-        .mode = 2,
-        .palette = PALETTE_R_DEFAULT,
+        .mode = 1,
+        .palette = PALETTE_EXPERIMENT,
         .width = 2000,
         .height = 2000,
         .background = LIGHT_GREY,
     };
-    
+
     Point* points = malloc(cfg.iterations * sizeof(Point));
 
     srand(time(NULL)); 
