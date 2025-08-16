@@ -273,7 +273,7 @@ int main(void) {
     cfg = (Config){
         .iterations = 5000000,
         .layers = 9,
-        .mode = 2,
+        .mode = 1,
         .palette = PALETTE_RED_TO_PINK,
         .width = 2000,
         .height = 2000,

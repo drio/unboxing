@@ -16,7 +16,7 @@ unboxing: main.c
 web: main.c
 	mkdir -p web
 	emcc main.c $(RAYLIB_WEB_LIB) -o $(WEB_OUTPUT) \
-		-Os -Wall \
+		-g -Wall \
 		-Wno-unused-variable \
 		-s USE_GLFW=3 \
 		-s ASYNCIFY \
