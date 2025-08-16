@@ -22,6 +22,24 @@ typedef struct {
     float g, h, i;
 } AffineTransform;
 
+typedef enum {
+    PALETTE_RED_TO_PINK,
+    PALETTE_BLUE_OCEAN,
+    PALETTE_GREEN_FOREST,
+    PALETTE_PURPLE_DREAM,
+    PALETTE_RAINBOW
+} PaletteType;
+
+typedef struct {
+    int iterations;
+    int layers;
+    int mode;
+    PaletteType palette;
+    int width;
+    int height;
+    Color background;
+} Config;
+
 Point apply_affine_transform(Point p, AffineTransform t, int layer_id) {
     Point result;
     // R does: point %*% matrix (row vector × matrix)
@@ -93,10 +111,10 @@ void print_matrix(AffineTransform* m) {
 }
 
 
-void generate_chaos_points(Point* points, int iterations, int num_layers) {
-    AffineTransform* transforms = malloc(num_layers * sizeof(AffineTransform));
+void generate_chaos_points(Point* points, Config* cfg) {
+    AffineTransform* transforms = malloc(cfg->layers * sizeof(AffineTransform));
 
-    for (int i = 0; i < num_layers; i++) {
+    for (int i = 0; i < cfg->layers; i++) {
         transforms[i] = create_random_transform();
     }
     //print_matrix(&transforms[0]);
@@ -108,8 +126,8 @@ void generate_chaos_points(Point* points, int iterations, int num_layers) {
         0, 0
     };
 
-    for (int i = 0; i < iterations; i++) {
-        int layer_choice = rand() % num_layers;
+    for (int i = 0; i < cfg->iterations; i++) {
+        int layer_choice = rand() % cfg->layers;
         int variant_choice = rand() % num_variant_functions;
 
         float old_z = current.z;
@@ -127,23 +145,13 @@ void generate_chaos_points(Point* points, int iterations, int num_layers) {
     free(transforms);
 }
 
-typedef enum {
-    PALETTE_RED_TO_PINK,
-    PALETTE_BLUE_OCEAN,
-    PALETTE_GREEN_FOREST,
-    PALETTE_PURPLE_DREAM,
-    PALETTE_RAINBOW
-} PaletteType;
-
-PaletteType current_palette = PALETTE_BLUE_OCEAN;
-
-Color map_color(float z_value) {
+Color map_color(float z_value, PaletteType palette) {
     float t = (z_value + 1.0f) / 3.0f; // map to [0,1] roughly
     if (t < 0) t = 0;
     if (t > .8) t = .8;
     unsigned char intensity = (unsigned char)(t * 255);
     
-    switch(current_palette) {
+    switch(palette) {
         case PALETTE_RED_TO_PINK:
             return (Color){255, intensity, intensity, 255};
             
@@ -179,16 +187,16 @@ void print_points(Point* points, int point_count) {
     }
 }
 
-Image create_fractal_image(Point* points, int point_count, int width, int height) {
-    Image fractal_image = GenImageColor(width, height, BLACK);
+Image create_fractal_image(Point* points, int point_count, Config* cfg) {
+    Image fractal_image = GenImageColor(cfg->width, cfg->height, cfg->background);
 
     int out = 0;
     for (int i = 0; i < point_count; i++) {
-        int screen_x = (int)((points[i].x + 4.0f) * width / 8.0f);
-        int screen_y = height - (int)((points[i].y + 4.0f) * height / 8.0f);  // Flip Y
+        int screen_x = (int)((points[i].x + 4.0f) * cfg->width / 8.0f);
+        int screen_y = cfg->height - (int)((points[i].y + 4.0f) * cfg->height / 8.0f);  // Flip Y
 
-        if (screen_x >= 0 && screen_x < width && screen_y >= 0 && screen_y < height) {
-            Color point_color = map_color(points[i].z);
+        if (screen_x >= 0 && screen_x < cfg->width && screen_y >= 0 && screen_y < cfg->height) {
+            Color point_color = map_color(points[i].z, cfg->palette);
             ImageDrawPixel(&fractal_image, screen_x, screen_y, point_color);
         } else {
             out += 1;
@@ -199,20 +207,18 @@ Image create_fractal_image(Point* points, int point_count, int width, int height
     return fractal_image;
 }
 
-void save_image(Point* points, int point_count, const char* filename) {
-    Image fractal_image = create_fractal_image(points, point_count, 2000, 2000);
+void save_image(Point* points, int point_count, const char* filename, Config* cfg) {
+    Image fractal_image = create_fractal_image(points, point_count, cfg);
     ExportImage(fractal_image, filename);
     UnloadImage(fractal_image);
     printf("Image saved to %s\n", filename);
 }
 
-void run_raylib_visualization(Point* points, int point_count) {
-    const int screenWidth = 1000;
-    const int screenHeight = 1000;
-    InitWindow(screenWidth, screenHeight, "Unboxing Algorithm");
+void run_raylib_visualization(Point* points, int point_count, Config* cfg) {
+    InitWindow(cfg->width, cfg->height, "Unboxing Algorithm");
 
     // Create fractal image and convert to texture
-    Image fractal_image = create_fractal_image(points, point_count, screenWidth, screenHeight);
+    Image fractal_image = create_fractal_image(points, point_count, cfg);
     Texture2D fractal_texture = LoadTextureFromImage(fractal_image);
     UnloadImage(fractal_image);
 
@@ -227,7 +233,7 @@ void run_raylib_visualization(Point* points, int point_count) {
 
             DrawText("Unboxing Fractal", 10, 10, 20, WHITE);
             DrawText("ESC to exit", 10, 40, 16, GRAY);
-            DrawFPS(screenWidth - 80, 10);
+            DrawFPS(cfg->width - 80, 10);
 
         EndDrawing();
     }
@@ -237,22 +243,27 @@ void run_raylib_visualization(Point* points, int point_count) {
 }
 
 int main(void) {
-    const int iterations = 1000000; // reduce for WASM compatibility
-    const int layers = 7;
-    const int mode = 1; // 0=print points, 1=visualization, 2=save image
-    //const int seed = 123;
-
-    Point* points = malloc(iterations * sizeof(Point));
+    Config cfg = {
+        .iterations = 1000000,
+        .layers = 7,
+        .mode = 1,
+        .palette = PALETTE_RAINBOW,
+        .width = 1000,
+        .height = 1000,
+        .background = BLACK
+    };
+    
+    Point* points = malloc(cfg.iterations * sizeof(Point));
 
     srand(time(NULL)); 
-    generate_chaos_points(points, iterations, layers);
+    generate_chaos_points(points, &cfg);
 
-    if (mode == 1) {
-        run_raylib_visualization(points, iterations);
-    } else if (mode == 2) {
-        save_image(points, iterations, "fractal.png");
+    if (cfg.mode == 1) {
+        run_raylib_visualization(points, cfg.iterations, &cfg);
+    } else if (cfg.mode == 2) {
+        save_image(points, cfg.iterations, "fractal.png", &cfg);
     } else {
-        print_points(points, iterations);
+        print_points(points, cfg.iterations);
     }
 
     free(points);
