@@ -2,7 +2,6 @@ node_modules
 *.vim
 .env*
 *.mp4
-web
 unboxing
 .cache/clangd/index
 prompts.txt

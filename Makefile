@@ -15,15 +15,16 @@ unboxing: main.c
 # Build WebAssembly version
 web: main.c
 	mkdir -p web
-	emcc main.c $(RAYLIB_WEB_LIB) -o $(WEB_OUTPUT) \
+	emcc main.c $(RAYLIB_WEB_LIB) -o web/index.js \
 		-g -Wall \
 		-Wno-unused-variable \
 		-s USE_GLFW=3 \
-		-s ASYNCIFY \
 		-s TOTAL_MEMORY=1GB \
 		-s FORCE_FILESYSTEM=1 \
-		-s EXPORTED_FUNCTIONS='["_main","_get_canvas_width","_get_canvas_height","_generate_fractal_pixels","_free_pixel_data"]' \
-		-s EXPORTED_RUNTIME_METHODS='["ccall","cwrap","HEAPU8"]' \
+		-s EXPORTED_FUNCTIONS='["_main","_generate_fractal_pixels","_free_pixel_data"]' \
+		-s EXPORTED_RUNTIME_METHODS='["HEAPU8"]' \
+		-s MODULARIZE=1 \
+		-s EXPORT_NAME='WasmModule' \
 		-DPLATFORM_WEB \
 		-I $(HOME)/dev/github.com/raysan5/raylib-5.5/src
 	cp html/index.html web/
