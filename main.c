@@ -127,12 +127,49 @@ void generate_chaos_points(Point* points, int iterations, int num_layers) {
     free(transforms);
 }
 
+typedef enum {
+    PALETTE_RED_TO_PINK,
+    PALETTE_BLUE_OCEAN,
+    PALETTE_GREEN_FOREST,
+    PALETTE_PURPLE_DREAM,
+    PALETTE_RAINBOW
+} PaletteType;
+
+PaletteType current_palette = PALETTE_BLUE_OCEAN;
+
 Color map_color(float z_value) {
     float t = (z_value + 1.0f) / 3.0f; // map to [0,1] roughly
     if (t < 0) t = 0;
-    if (t > 1) t = 1;
+    if (t > .8) t = .8;
     unsigned char intensity = (unsigned char)(t * 255);
-    return (Color){255, intensity, intensity, 255}; // red=255 always, G&B increase: red->pink->white
+    
+    switch(current_palette) {
+        case PALETTE_RED_TO_PINK:
+            return (Color){255, intensity, intensity, 255};
+            
+        case PALETTE_BLUE_OCEAN:
+            return (Color){intensity/3, intensity/2, 255, 255};
+            
+        case PALETTE_GREEN_FOREST:
+            return (Color){intensity/4, 255, intensity/2, 255};
+            
+        case PALETTE_PURPLE_DREAM:
+            return (Color){255, intensity/3, 255, 255};
+            
+        case PALETTE_RAINBOW:
+            if (t < 0.2f) {
+                return (Color){255, (unsigned char)(t * 1275), 0, 255}; // Red to Orange
+            } else if (t < 0.4f) {
+                return (Color){255, 255, 0, 255}; // Yellow
+            } else if (t < 0.6f) {
+                return (Color){(unsigned char)(255 * (1 - (t-0.4f)*5)), 255, 0, 255}; // Green
+            } else {
+                return (Color){0, (unsigned char)(255 * (1 - (t-0.6f)*5)), 255, 255}; // Blue
+            }
+            
+        default:
+            return (Color){255, intensity, intensity, 255};
+    }
 }
 
 void print_points(Point* points, int point_count) {
