@@ -59,14 +59,14 @@ Point rescaling_variant(Point p) {
 }
 
 VariantFunction variant_functions[] = {
+    {rescaling_variant, "rescaling", "point + (sum(point^2))^(1/3)"},
     {sine_variant, "sine", "sin(point)"},
     {double_sine_variant, "double_sine", "2 * sin(point)"},  
-    {rescaling_variant, "rescaling", "point + (sum(point^2))^(1/3)"}
 };
 const int num_variant_functions = 3;
 
 float random_coeff() {
-    return ((float)rand() / (float)RAND_MAX) * 2.0f - 1.0f; 
+    return ((float)rand() / (float)RAND_MAX) * 2.0f - 1.0f;  // [-1, 1]
 }
 
 AffineTransform create_random_transform() {
@@ -98,7 +98,7 @@ void generate_chaos_points(Point* points, int iterations, int num_layers) {
     for (int i = 0; i < num_layers; i++) {
         transforms[i] = create_random_transform();
     }
-    // print_matrix(&transforms[0]);
+    //print_matrix(&transforms[0]);
 
     Point current = {
         0.0f, 0.0f, 0.0f, 0, 0
