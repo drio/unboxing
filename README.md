@@ -4,6 +4,14 @@ A C (and webassembly) version of Danielle Navarro's [unboxing](https://blog.djna
 
 <img src="imgs/fractal.png" width="600px"/>
 
+### Load R env (for running the R version)
+
+```
+conda create -n r-env r-essentials r-base
+conda activate r-env
+```
+
+
 ### References
 
 1. https://blog.djnavarro.net/posts/2024-12-22_art-from-code-5/

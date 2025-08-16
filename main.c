@@ -55,9 +55,8 @@ Point rescaling_variant(Point p) {
     float s = powf(p.x*p.x + p.y*p.y + p.z*p.z, 1.0f/3.0f);
     result.x = p.x + s;
     result.y = p.y + s;
-    result.z = fabsf(p.z + s); // Use absolute value
+    result.z = p.z + s; // Use absolute value
     return result;
-
 }
 
 VariantFunction variant_functions[] = {
@@ -103,7 +102,10 @@ void generate_chaos_points(Point* points, int iterations, int num_layers) {
     //print_matrix(&transforms[0]);
 
     Point current = {
-        0.0f, 0.0f, 0.0f, 0, 0
+        random_coeff(), 
+        random_coeff(), 
+        random_coeff(), 
+        0, 0
     };
 
     for (int i = 0; i < iterations; i++) {
@@ -111,13 +113,15 @@ void generate_chaos_points(Point* points, int iterations, int num_layers) {
         int variant_choice = rand() % num_variant_functions;
 
         float old_z = current.z;
-        // current.z = 1.0f; // reset z=1 before transform as in article
+        current.z = 1.0f; // reset z=1 before transform as in article
         current = apply_affine_transform(current, transforms[layer_choice], layer_choice);
         current = variant_functions[variant_choice].function(current);
         current.z = (current.z + old_z) / 2.0f; // blend color values as in article
 
         current.layer = layer_choice;
         current.variant = variant_choice;
+
+        points[i] = current;
     }
 
     free(transforms);
@@ -196,7 +200,7 @@ void run_raylib_visualization(Point* points, int point_count) {
 }
 
 int main(void) {
-    const int iterations = 1000000; // reduce for WASM compatibility
+    const int iterations = 100000; // reduce for WASM compatibility
     const int layers = 5;
     const int mode = 1; // 0=print points, 1=visualization, 2=save image
     //const int seed = 123;
