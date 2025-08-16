@@ -24,9 +24,11 @@ typedef struct {
 
 Point apply_affine_transform(Point p, AffineTransform t, int layer_id) {
     Point result;
-    result.x = t.a * p.x + t.b * p.y + t.c;
-    result.y = t.d * p.x + t.e * p.y + t.f;
-    result.z = t.g * p.x + t.h * p.y + t.i;
+    // R does: point %*% matrix (row vector × matrix)
+    // This means: [x y z] × [[a d g], [b e h], [c f i]]
+    result.x = p.x * t.a + p.y * t.b + p.z * t.c;  // dot with first column
+    result.y = p.x * t.d + p.y * t.e + p.z * t.f;  // dot with second column  
+    result.z = p.x * t.g + p.y * t.h + p.z * t.i;  // dot with third column
     result.layer = layer_id;
     result.variant = p.variant;
     return result;
