@@ -13,25 +13,9 @@ IMAGES = $(foreach p,$(PALETTES),$(foreach i,$(INDICES),palette_$(p)_$(i).png))
 
 all: $(IMAGES) generate-index
 
-# Pattern rule for generating palette images
-palette_%_1.png:
-	$(eval PALETTE := $(word 1,$(subst _, ,$*)))
-	$(UNBOXING) -p $(PALETTE) -w $(WIDTH) -h $(HEIGHT) -i $(ITERATIONS) -o $@
-
-palette_%_2.png:
-	$(eval PALETTE := $(word 1,$(subst _, ,$*)))
-	$(UNBOXING) -p $(PALETTE) -w $(WIDTH) -h $(HEIGHT) -i $(ITERATIONS) -o $@
-
-palette_%_3.png:
-	$(eval PALETTE := $(word 1,$(subst _, ,$*)))
-	$(UNBOXING) -p $(PALETTE) -w $(WIDTH) -h $(HEIGHT) -i $(ITERATIONS) -o $@
-
-palette_%_4.png:
-	$(eval PALETTE := $(word 1,$(subst _, ,$*)))
-	$(UNBOXING) -p $(PALETTE) -w $(WIDTH) -h $(HEIGHT) -i $(ITERATIONS) -o $@
-
-palette_%_5.png:
-	$(eval PALETTE := $(word 1,$(subst _, ,$*)))
+palette_%.png:
+	$(eval PARTS := $(subst _, ,$*))
+	$(eval PALETTE := $(word 1,$(PARTS)))
 	$(UNBOXING) -p $(PALETTE) -w $(WIDTH) -h $(HEIGHT) -i $(ITERATIONS) -o $@
 
 generate-index:
