@@ -1,6 +1,7 @@
 #include "color.h"
 #include <math.h>
 #include <stdint.h>
+#include <stdio.h>
 
 // Use both the transformation and the z value to compute color
 // Layer structure: Each of the 5 chaos transformations has its distinct color
@@ -9,7 +10,9 @@
 
 // Custom color constants for palettes (raylib provides basic colors like BLACK, RED, etc.)
 static const Color NAVY = {0, 0, 50, 255};
-static const Color DARK_GREEN = {0, 50, 0, 255};
+static const Color DARK_GREEN = {0, 100, 0, 255};
+static const Color BRIGHT_GREEN = {0, 200, 50, 255};
+static const Color YELLOW_GREEN = {150, 255, 150, 255};
 static const Color FIRE_YELLOW = {255, 255, 100, 255};
 static const Color DARK_GREY = {60, 60, 60, 255};
 
@@ -47,6 +50,7 @@ Color map_color(float layer_value, float z_value, PaletteType palette) {
     // Combine layer structure with z variation
     float t = (layer_t + z_t * 0.3f) / 1.3f;  // Layer dominates, z adds variation
     if (t > 1.0f) t = 1.0f;
+    
 
     switch(palette) {
         case PALETTE_EXPERIMENT:
@@ -59,7 +63,7 @@ Color map_color(float layer_value, float z_value, PaletteType palette) {
             return palette_3color(t, NAVY, BLUE, SKYBLUE);
 
         case PALETTE_GREEN_FOREST:
-            return palette_3color(t, DARK_GREEN, GREEN, LIME);
+            return palette_3color(t, DARK_GREEN, BRIGHT_GREEN, YELLOW_GREEN);
 
         case PALETTE_PURPLE_DREAM:
             return palette_3color(t, PURPLE, MAGENTA, ORANGE);
