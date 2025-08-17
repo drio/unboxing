@@ -166,7 +166,7 @@ Color map_color(float z_value, PaletteType palette) {
 
     switch(palette) {
         case PALETTE_EXPERIMENT:
-            return (Color){255, 1-intensity, intensity, 128};
+            return (Color){255, intensity, intensity, 200};
         case PALETTE_GREY:
             return DARK_GREY;
         case PALETTE_RED_TO_PINK:
@@ -331,13 +331,13 @@ int main(void) {
     return 0;
 #else
     cfg = (Config){
-        .iterations = 20000000,
-        .layers = 7,
-        .mode = 1,
-        .palette = PALETTE_EXPERIMENT,
-        .width = 2000,
-        .height = 2000,
-        .background = LIGHT_GREY,
+        .iterations = 10000000,
+        .layers = 5,
+        .mode = 2,
+        .palette = PALETTE_RED_TO_PINK,
+        .width = 4000,
+        .height = 4000,
+        .background = BLACK,
     };
 
     Point* points = malloc(cfg.iterations * sizeof(Point));
