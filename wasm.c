@@ -43,7 +43,7 @@ unsigned char* generate_fractal_pixels(int iterations, int layers, int palette_t
         int screen_y = height - (int)((points[i].y + 4.0f) * height / 8.0f);
 
         if (screen_x >= 0 && screen_x < width && screen_y >= 0 && screen_y < height) {
-            Color point_color = map_color(points[i].z, fractal_cfg.palette);
+            Color point_color = map_color(points[i].layer, points[i].z, fractal_cfg.palette);
             int pixel_index = (screen_y * width + screen_x) * 4;
             pixels[pixel_index + 0] = point_color.r;
             pixels[pixel_index + 1] = point_color.g;

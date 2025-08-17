@@ -16,12 +16,12 @@ int main(void) {
     return 0;
 #else
     cfg = (Config){
+        .mode = 2,
         .iterations = 10000000,
         .layers = 5,
-        .mode = 1,
-        .palette = PALETTE_RED_TO_PINK,
-        .width = 1000,
-        .height = 1000,
+        .palette = PALETTE_RAINBOW,
+        .width = 4000,
+        .height = 4000,
         .background = BLACK,
     };
 

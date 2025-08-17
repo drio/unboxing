@@ -14,12 +14,9 @@ typedef enum {
     PALETTE_EXPERIMENT, 
 } PaletteType;
 
-extern const Color LIGHT_GREY;
-extern const Color DARK_GREY;
-extern const Color CREAM;
-extern const Color DARK_BLUE;
-extern const Color FOREST_GREEN;
-
-Color map_color(float z_value, PaletteType palette);
+// Color functions
+Color lerp_color(Color a, Color b, float t);
+Color palette_3color(float t, Color c1, Color c2, Color c3);
+Color map_color(float layer_value, float z_value, PaletteType palette);
 
 #endif

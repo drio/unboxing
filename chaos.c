@@ -53,7 +53,7 @@ Image create_fractal_image(Point* points, int point_count, Config* cfg) {
         int screen_y = cfg->height - (int)((points[i].y + 4.0f) * cfg->height / 8.0f);
 
         if (screen_x >= 0 && screen_x < cfg->width && screen_y >= 0 && screen_y < cfg->height) {
-            Color point_color = map_color(points[i].z, cfg->palette);
+            Color point_color = map_color(points[i].layer, points[i].z, cfg->palette);
             ImageDrawPixel(&fractal_image, screen_x, screen_y, point_color);
         } else {
             out += 1;

@@ -1,52 +1,78 @@
 #include "color.h"
+#include <math.h>
+#include <stdint.h>
 
-const Color LIGHT_GREY = {240, 240, 240, 255};
-const Color DARK_GREY = {60, 60, 60, 255};
-const Color CREAM = {245, 245, 220, 255};
-const Color DARK_BLUE = {25, 25, 112, 255};
-const Color FOREST_GREEN = {34, 139, 34, 255};
+// Use both the transformation and the z value to compute color
+// Layer structure: Each of the 5 chaos transformations has its distinct color
+// region Z variation: Within each layer, the z values add subtle color
+// gradients and variations
 
-Color map_color(float z_value, PaletteType palette) {
-    float t = (z_value + 1.0f) / 3.0f;
-    if (t < 0) t = 0;
-    if (t > .8) t = .8;
-    unsigned char intensity = (unsigned char)(t * 255);
+// Custom color constants for palettes (raylib provides basic colors like BLACK, RED, etc.)
+static const Color NAVY = {0, 0, 50, 255};
+static const Color DARK_GREEN = {0, 50, 0, 255};
+static const Color FIRE_YELLOW = {255, 255, 100, 255};
+static const Color DARK_GREY = {60, 60, 60, 255};
+
+// 3-color linear interpolation
+Color lerp_color(Color a, Color b, float t) {
+    if (t < 0.0f) t = 0.0f;
+    if (t > 1.0f) t = 1.0f;
+
+    return (Color){
+        (uint8_t)(a.r + t * (b.r - a.r)),
+        (uint8_t)(a.g + t * (b.g - a.g)),
+        (uint8_t)(a.b + t * (b.b - a.b)),
+        255
+    };
+}
+
+Color palette_3color(float t, Color c1, Color c2, Color c3) {
+    if (t <= 0.5f) {
+        return lerp_color(c1, c2, t * 2.0f);
+    } else {
+        return lerp_color(c2, c3, (t - 0.5f) * 2.0f);
+    }
+}
+
+Color map_color(float layer_value, float z_value, PaletteType palette) {
+    // Blend layer (0-4) and z value for richer coloring
+    float layer_t = layer_value / 4.0f;
+    float z_t = (z_value + 1.0f) / 3.0f;
+    if (z_t < 0) z_t = 0;
+    if (z_t > 1) z_t = 1;
+
+    // Apply log transform to spread out clustered z values
+    z_t = logf(z_t * 9.0f + 1.0f) / logf(10.0f);
+
+    // Combine layer structure with z variation
+    float t = (layer_t + z_t * 0.3f) / 1.3f;  // Layer dominates, z adds variation
+    if (t > 1.0f) t = 1.0f;
 
     switch(palette) {
         case PALETTE_EXPERIMENT:
-            return (Color){255, intensity, intensity, 200};
-        case PALETTE_GREY:
-            return DARK_GREY;
+            return (Color){255, (uint8_t)(255 * (1-t)), (uint8_t)(255 * t), 128};
+
         case PALETTE_RED_TO_PINK:
-            return (Color){255, intensity, intensity, 255};
+            return palette_3color(t, BLACK, RED, YELLOW);
 
         case PALETTE_BLUE_OCEAN:
-            return (Color){intensity/3, intensity/2, 255, 255};
+            return palette_3color(t, NAVY, BLUE, SKYBLUE);
 
         case PALETTE_GREEN_FOREST:
-            return (Color){intensity/4, 255, intensity/2, 255};
+            return palette_3color(t, DARK_GREEN, GREEN, LIME);
 
         case PALETTE_PURPLE_DREAM:
-            return (Color){255, intensity/3, 255, 255};
+            return palette_3color(t, PURPLE, MAGENTA, ORANGE);
 
-        case PALETTE_RAINBOW:
-            if (t < 0.2f) {
-                return (Color){255, (unsigned char)(t * 1275), 0, 255};
-            } else if (t < 0.4f) {
-                return (Color){255, 255, 0, 255};
-            } else if (t < 0.6f) {
-                return (Color){(unsigned char)(255 * (1 - (t-0.4f)*5)), 255, 0, 255};
-            } else {
-                return (Color){0, (unsigned char)(255 * (1 - (t-0.6f)*5)), 255, 255};
-            }
+        case PALETTE_GREY:
+            return DARK_GREY;
 
-        case PALETTE_R_DEFAULT:
-            {
-                unsigned char darkness = (unsigned char)(t * 120);
-                return (Color){darkness, darkness, darkness, 255};
-            }
+        case PALETTE_R_DEFAULT: {
+            uint8_t darkness = (uint8_t)(t * 120);
+            return (Color){darkness, darkness, darkness, 255};
+        }
 
         default:
-            return (Color){255, intensity, intensity, 255};
+            return palette_3color(t, BLACK, RED, FIRE_YELLOW);
     }
 }
