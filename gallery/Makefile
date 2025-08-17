@@ -33,4 +33,4 @@ palette_7_experiment.png:
 	$(UNBOXING) -p 7 -w $(WIDTH) -h $(HEIGHT) -i $(ITERATIONS) -o $@
 
 clean:
-	rm -f $(IMAGES)
+	rm -f $(IMAGES) 
