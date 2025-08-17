@@ -2,35 +2,40 @@ UNBOXING = ../unboxing
 WIDTH ?= 4000
 HEIGHT ?= 4000
 ITERATIONS ?= 10000000
-IMAGES = palette_0_red_to_pink.png palette_1_blue_ocean.png palette_2_green_forest.png palette_3_purple_dream.png palette_4_rainbow.png palette_5_r_default.png palette_6_grey.png palette_7_experiment.png
+COUNT ?= 1
 
-.PHONY: all clean
+# Generate all possible targets
+PALETTES = 0 1 2 3 4 5 6 7
+INDICES = $(shell seq 1 $(COUNT))
+IMAGES = $(foreach p,$(PALETTES),$(foreach i,$(INDICES),palette_$(p)_$(i).png))
 
-all: $(IMAGES)
+.PHONY: all clean generate-index
 
-palette_0_red_to_pink.png:
-	$(UNBOXING) -p 0 -w $(WIDTH) -h $(HEIGHT) -i $(ITERATIONS) -o $@
+all: $(IMAGES) generate-index
 
-palette_1_blue_ocean.png:
-	$(UNBOXING) -p 1 -w $(WIDTH) -h $(HEIGHT) -i $(ITERATIONS) -o $@
+# Pattern rule for generating palette images
+palette_%_1.png:
+	$(eval PALETTE := $(word 1,$(subst _, ,$*)))
+	$(UNBOXING) -p $(PALETTE) -w $(WIDTH) -h $(HEIGHT) -i $(ITERATIONS) -o $@
 
-palette_2_green_forest.png:
-	$(UNBOXING) -p 2 -w $(WIDTH) -h $(HEIGHT) -i $(ITERATIONS) -o $@
+palette_%_2.png:
+	$(eval PALETTE := $(word 1,$(subst _, ,$*)))
+	$(UNBOXING) -p $(PALETTE) -w $(WIDTH) -h $(HEIGHT) -i $(ITERATIONS) -o $@
 
-palette_3_purple_dream.png:
-	$(UNBOXING) -p 3 -w $(WIDTH) -h $(HEIGHT) -i $(ITERATIONS) -o $@
+palette_%_3.png:
+	$(eval PALETTE := $(word 1,$(subst _, ,$*)))
+	$(UNBOXING) -p $(PALETTE) -w $(WIDTH) -h $(HEIGHT) -i $(ITERATIONS) -o $@
 
-palette_4_rainbow.png:
-	$(UNBOXING) -p 4 -w $(WIDTH) -h $(HEIGHT) -i $(ITERATIONS) -o $@
+palette_%_4.png:
+	$(eval PALETTE := $(word 1,$(subst _, ,$*)))
+	$(UNBOXING) -p $(PALETTE) -w $(WIDTH) -h $(HEIGHT) -i $(ITERATIONS) -o $@
 
-palette_5_r_default.png:
-	$(UNBOXING) -p 5 -w $(WIDTH) -h $(HEIGHT) -i $(ITERATIONS) -o $@
+palette_%_5.png:
+	$(eval PALETTE := $(word 1,$(subst _, ,$*)))
+	$(UNBOXING) -p $(PALETTE) -w $(WIDTH) -h $(HEIGHT) -i $(ITERATIONS) -o $@
 
-palette_6_grey.png:
-	$(UNBOXING) -p 6 -w $(WIDTH) -h $(HEIGHT) -i $(ITERATIONS) -o $@
-
-palette_7_experiment.png:
-	$(UNBOXING) -p 7 -w $(WIDTH) -h $(HEIGHT) -i $(ITERATIONS) -o $@
+generate-index:
+	./generate_index.py
 
 clean:
-	rm -f $(IMAGES) 
+	rm -f palette_*.png index.html 
