@@ -16,8 +16,9 @@
         canvas {
             display: block;
             border: 0px solid #666;
-            max-width: 100%;
-            height: auto;
+            max-width: calc(100vw - 340px);
+            max-height: calc(100vh - 60px);
+            object-fit: contain;
         }
 
         .container {
@@ -184,6 +185,9 @@
             isGenerating = true;
             updateStatus('Generating fractal...');
 
+            // Allow UI to update before starting heavy computation
+            await new Promise(resolve => setTimeout(resolve, 10));
+
             const startTime = performance.now();
             const canvas = document.getElementById('canvas');
 
@@ -223,7 +227,6 @@
                 imageData.data.set(pixelData);
                 ctx.putImageData(imageData, 0, 0);
 
-                // Free the memory
                 Module._free_pixel_data(pixelDataPtr);
 
                 hasValidImage = true;
