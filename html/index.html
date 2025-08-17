@@ -2,201 +2,224 @@
 <html>
 
 <head>
-	<meta charset="utf-8">
-	<title>Unboxing - drio</title>
-	<style>
-		html,
-		body {
-			margin: 0;
-			padding: 0;
-			background: black;
-			font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-		}
+    <meta charset="utf-8">
+    <title>Unboxing - drio</title>
+    <style>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            background: black;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
 
-		canvas {
-			display: block;
-			border: 0px solid #666;
-			max-width: 100%;
-			height: auto;
-		}
+        canvas {
+            display: block;
+            border: 0px solid #666;
+            max-width: 100%;
+            height: auto;
+        }
 
-		.container {
-			position: relative;
-			width: 100%;
-			height: 100vh;
-		}
+        .container {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+        }
 
-		.canvas-container {
-			width: 100%;
-			height: 100%;
-			display: flex;
-			flex-direction: column;
-			align-items: center;
-		}
+        .canvas-container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
 
-		.controls {
-			position: fixed;
-			top: 1px;
-			right: 0;
-			z-index: 1000;
-		}
+        .controls {
+            position: fixed;
+            top: 1px;
+            right: 0;
+            z-index: 1000;
+        }
 
-		.controls .lil-gui {
-			margin: 0 !important;
-			padding: 0 !important;
-		}
+        .controls .lil-gui {
+            margin: 0 !important;
+            padding: 0 !important;
+        }
 
-		#status {
-			color: #888;
-			margin-top: 10px;
-			font-size: 12px;
-		}
-	</style>
+        #status {
+            color: #888;
+            margin-top: 10px;
+            font-size: 12px;
+        }
+    </style>
 </head>
 
 <body>
-	<div class="container">
-		<div class="canvas-container">
-			<canvas id="canvas" oncontextmenu="event.preventDefault()"></canvas>
-			<div id="status">Ready to generate fractal...</div>
-		</div>
-		<div class="controls" id="controls"></div>
-	</div>
-	<script type="module" src="https://cdn.jsdelivr.net/npm/lil-gui@0.20/+esm"></script>
-	<script src="index.js"></script>
-	<script type="module">
-		import GUI from 'https://cdn.jsdelivr.net/npm/lil-gui@0.20/+esm';
+    <div class="container">
+        <div class="canvas-container">
+            <canvas id="canvas" oncontextmenu="event.preventDefault()"></canvas>
+            <div id="status">Ready to generate fractal...</div>
+        </div>
+        <div class="controls" id="controls"></div>
+    </div>
+    <script src="index.js"></script>
+    <script type="module">
+        import GUI from 'https://cdn.jsdelivr.net/npm/lil-gui@0.20/+esm';
 
-		let Module = null;
-		let isGenerating = false;
+        let Module = null;
+        let isGenerating = false;
 
-		// Configuration object for lil-gui
-		const config = {
-			iterations: 5000000,
-			layers: 7,
-			palette: 0,
-			width: 4000,
-			height: 4000,
-			seed: Math.floor(Math.random() * 1000000),
-			background: {
-				r: 0,
-				g: 0,
-				b: 0
-			},
-			generate: function () {
-				generateFractal();
-			},
-			randomSeed: function () {
-				config.seed = Math.floor(Math.random() * 1000000);
-				gui.controllersRecursive().forEach(controller => {
-					if (controller.property === 'seed') {
-						controller.updateDisplay();
-					}
-				});
-			}
-		};
+        // Configuration object for lil-gui
+        const config = {
+            iterations: 5000000,
+            layers: 7,
+            palette: 0,
+            width: 4000,
+            height: 4000,
+            seed: Math.floor(Math.random() * 1000000),
+            background: {
+                r: 0,
+                g: 0,
+                b: 0
+            },
+            generate: function () {
+                generateFractal();
+            },
+            randomSeed: function () {
+                config.seed = Math.floor(Math.random() * 1000000);
+                gui.controllersRecursive().forEach(controller => {
+                    if (controller.property === 'seed') {
+                        controller.updateDisplay();
+                    }
+                });
+            },
+            download: function () {
+                downloadImage();
+            }
+        };
 
-		// Status updates
-		function updateStatus(message) {
-			document.getElementById('status').textContent = message;
-		}
+        function updateStatus(message) {
+            document.getElementById('status').textContent = message;
+        }
 
-		async function generateFractal() {
-			if (isGenerating) return;
+        let hasValidImage = false;
 
-			isGenerating = true;
-			updateStatus('Generating fractal...');
+        function downloadImage() {
+            const canvas = document.getElementById('canvas');
+            if (!hasValidImage || !canvas.width || !canvas.height) {
+                updateStatus('No image to download. Generate a fractal first.');
+                return;
+            }
 
-			const canvas = document.getElementById('canvas');
+            try {
+                const link = document.createElement('a');
+                link.download = `chaos-game-${config.palette}-${config.layers}-${config.seed}.png`;
+                link.href = canvas.toDataURL();
+                link.click();
+                updateStatus('Image downloaded successfully!');
+            } catch (e) {
+                console.error('Error downloading image:', e);
+                updateStatus('Error downloading image: ' + e.message);
+            }
+        }
 
-			try {
-				console.log('Generating fractal with config:', config);
+        async function generateFractal() {
+            if (isGenerating) return;
 
-				const pixelDataPtr = Module._generate_fractal_pixels(
-					config.iterations,
-					config.layers,
-					config.palette,
-					config.width,
-					config.height,
-					config.background.r,
-					config.background.g,
-					config.background.b,
-					config.seed
-				);
+            isGenerating = true;
+            updateStatus('Generating fractal...');
 
-				console.log("Got fractal pixels at pointer:", pixelDataPtr);
+            const canvas = document.getElementById('canvas');
 
-				// Get the pixel data from WASM memory
-				const pixelCount = config.width * config.height * 4;
-				const pixelData = new Uint8Array(Module.HEAPU8.buffer, pixelDataPtr, pixelCount);
+            try {
+                console.log('Generating fractal with config:', config);
 
-				// Create ImageData and draw to canvas
-				canvas.width = config.width;
-				canvas.height = config.height;
+                const pixelDataPtr = Module._generate_fractal_pixels(
+                    config.iterations,
+                    config.layers,
+                    config.palette,
+                    config.width,
+                    config.height,
+                    config.background.r,
+                    config.background.g,
+                    config.background.b,
+                    config.seed
+                );
 
-				const ctx = canvas.getContext('2d');
-				const imageData = ctx.createImageData(config.width, config.height);
-				imageData.data.set(pixelData);
-				ctx.putImageData(imageData, 0, 0);
+                console.log("Got fractal pixels at pointer:", pixelDataPtr);
 
-				// Free the memory
-				Module._free_pixel_data(pixelDataPtr);
+                // Get the pixel data from WASM memory
+                const pixelCount = config.width * config.height * 4;
+                const pixelData = new Uint8Array(Module.HEAPU8.buffer, pixelDataPtr, pixelCount);
 
-				updateStatus('Fractal generated successfully!');
-				console.log('Fractal rendered successfully!');
-			} catch (e) {
-				console.error('Error generating fractal:', e);
-				updateStatus('Error generating fractal: ' + e.message);
-			} finally {
-				isGenerating = false;
-			}
-		}
+                // Create ImageData and draw to canvas
+                canvas.width = config.width;
+                canvas.height = config.height;
 
-		async function initApp() {
-			updateStatus('Loading WASM module...');
+                const ctx = canvas.getContext('2d');
+                const imageData = ctx.createImageData(config.width, config.height);
+                imageData.data.set(pixelData);
+                ctx.putImageData(imageData, 0, 0);
 
-			// Load modularized WASM
-			Module = await WasmModule();
-			console.log('WASM module loaded');
+                // Free the memory
+                Module._free_pixel_data(pixelDataPtr);
 
-			updateStatus('Setting up controls...');
-			setupGUI();
+                hasValidImage = true;
+                updateStatus('Fractal generated successfully!');
+                console.log('Fractal rendered successfully!');
+            } catch (e) {
+                console.error('Error generating fractal:', e);
+                updateStatus('Error generating fractal: ' + e.message);
+            } finally {
+                isGenerating = false;
+            }
+        }
 
-			updateStatus('Ready! Click Generate to create a fractal.');
-		}
+        async function initApp() {
+            updateStatus('Loading WASM module...');
 
-		function setupGUI() {
-			const gui = new GUI({container: document.getElementById('controls')});
-			gui.title('Chaos Game Generator');
+            // Load modularized WASM
+            Module = await WasmModule();
+            console.log('WASM module loaded');
 
-			// Main controls
-			gui.add(config, 'iterations', 100000, 10000000, 100000).name('Iterations/Points');
-			gui.add(config, 'layers', 1, 20, 1).name('Layers');
-			gui.add(config, 'palette', 0, 7, 1).name('Palette');
-			gui.add(config, 'seed', 0, 1000000, 1).name('Seed');
+            updateStatus('Setting up controls...');
+            setupGUI();
 
-			// Action buttons
-			gui.add(config, 'randomSeed').name('Random Seed');
-			gui.add(config, 'generate').name('🎨 Generate');
+            updateStatus('Ready! Click Generate to create a fractal.');
+        }
 
-			// Image settings folder
-			const imageFolder = gui.addFolder('Image Settings');
-			imageFolder.add(config, 'width', [1000, 2000, 4000, 8000]).name('Width');
-			imageFolder.add(config, 'height', [1000, 2000, 4000, 8000]).name('Height');
+        function setupGUI() {
+            const gui = new GUI({container: document.getElementById('controls')});
+            gui.title('Chaos Game Generator');
 
-			// Background color folder
-			const bgFolder = gui.addFolder('Background Color');
-			bgFolder.add(config.background, 'r', 0, 255, 1).name('Red');
-			bgFolder.add(config.background, 'g', 0, 255, 1).name('Green');
-			bgFolder.add(config.background, 'b', 0, 255, 1).name('Blue');
+            // Main controls
+            gui.add(config, 'iterations', 100000, 10000000, 100000).name('Iterations/Points');
+            gui.add(config, 'layers', 1, 20, 1).name('Layers');
+            gui.add(config, 'palette', 0, 7, 1).name('Palette');
+            gui.add(config, 'seed', 0, 1000000, 1).name('Seed');
 
-			// Store gui reference globally for seed updates
-			window.gui = gui;
-		}
+            // Action buttons
+            gui.add(config, 'randomSeed').name('Random Seed');
+            gui.add(config, 'generate').name('🎨 Generate');
+            gui.add(config, 'download').name('💾 Download PNG');
 
-		// Start when page loads
-		window.addEventListener('load', initApp);
-	</script>
+            // Image settings folder
+            const imageFolder = gui.addFolder('Image Settings');
+            imageFolder.add(config, 'width', [1000, 2000, 4000, 8000]).name('Width');
+            imageFolder.add(config, 'height', [1000, 2000, 4000, 8000]).name('Height');
+
+            // Background color folder
+            const bgFolder = gui.addFolder('Background Color');
+            bgFolder.add(config.background, 'r', 0, 255, 1).name('Red');
+            bgFolder.add(config.background, 'g', 0, 255, 1).name('Green');
+            bgFolder.add(config.background, 'b', 0, 255, 1).name('Blue');
+
+            // Store gui reference globally for seed updates
+            window.gui = gui;
+        }
+
+        window.addEventListener('load', initApp);
+    </script>
 </body>
 
 </html>
