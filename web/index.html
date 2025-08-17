@@ -51,10 +51,69 @@
             margin-top: 10px;
             font-size: 12px;
         }
+
+        .info-panel {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            z-index: 2000;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 5px 5px;
+            border-radius: 6px;
+            backdrop-filter: blur(4px);
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .attribution {
+            font-size: 11px;
+            color: #ccc;
+        }
+
+        .attribution a {
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .attribution a:hover {
+            color: #ddd;
+        }
+
+        .timing {
+            font-size: 10px;
+            color: #bbb;
+        }
+
+        .repo-link {
+            font-size: 10px;
+            color: #999;
+        }
+
+        .repo-link a {
+            color: #aaa;
+            text-decoration: none;
+            display: inline-block;
+            transition: transform 0.2s ease;
+        }
+
+        .repo-link a:hover {
+            color: #fff;
+            transform: scale(1.1);
+        }
     </style>
 </head>
 
 <body>
+    <div class="info-panel">
+        <div class="attribution">
+            Made with ❤️ by <a href="https://drio.sh" target="_blank">drio</a>
+        </div>
+        <div class="repo-link"><a href="https://github.com/drio/unboxing" target="_blank"
+                title="View source on GitHub">source</a>
+        </div>
+        <div class="timing" id="timing"></div>
+    </div>
     <div class="container">
         <div class="canvas-container">
             <canvas id="canvas" oncontextmenu="event.preventDefault()"></canvas>
@@ -77,11 +136,7 @@
             width: 4000,
             height: 4000,
             seed: Math.floor(Math.random() * 1000000),
-            background: {
-                r: 0,
-                g: 0,
-                b: 0
-            },
+            backgroundColor: '#000000',
             generate: function () {
                 generateFractal();
             },
@@ -113,7 +168,7 @@
 
             try {
                 const link = document.createElement('a');
-                link.download = `chaos-game-${config.palette}-${config.layers}-${config.seed}.png`;
+                link.download = `fractal-${config.palette}-${config.layers}-${config.seed}.png`;
                 link.href = canvas.toDataURL();
                 link.click();
                 updateStatus('Image downloaded successfully!');
@@ -129,10 +184,17 @@
             isGenerating = true;
             updateStatus('Generating fractal...');
 
+            const startTime = performance.now();
             const canvas = document.getElementById('canvas');
 
             try {
                 console.log('Generating fractal with config:', config);
+
+                // Convert hex color to RGB
+                const hex = config.backgroundColor.replace('#', '');
+                const r = parseInt(hex.substr(0, 2), 16);
+                const g = parseInt(hex.substr(2, 2), 16);
+                const b = parseInt(hex.substr(4, 2), 16);
 
                 const pixelDataPtr = Module._generate_fractal_pixels(
                     config.iterations,
@@ -140,9 +202,9 @@
                     config.palette,
                     config.width,
                     config.height,
-                    config.background.r,
-                    config.background.g,
-                    config.background.b,
+                    r,
+                    g,
+                    b,
                     config.seed
                 );
 
@@ -165,6 +227,11 @@
                 Module._free_pixel_data(pixelDataPtr);
 
                 hasValidImage = true;
+
+                const endTime = performance.now();
+                const duration = ((endTime - startTime) / 1000).toFixed(2);
+                document.getElementById('timing').textContent = `⚡Generated in ${duration}s`;
+
                 updateStatus('Fractal generated successfully!');
                 console.log('Fractal rendered successfully!');
             } catch (e) {
@@ -205,14 +272,12 @@
 
             // Image settings folder
             const imageFolder = gui.addFolder('Image Settings');
-            imageFolder.add(config, 'width', [1000, 2000, 4000, 8000]).name('Width');
-            imageFolder.add(config, 'height', [1000, 2000, 4000, 8000]).name('Height');
+            imageFolder.add(config, 'width', [1000, 2000, 3000, 4000, 5000, 6000]).name('Width');
+            imageFolder.add(config, 'height', [1000, 2000, 3000, 4000, 5000, 6000]).name('Height');
 
             // Background color folder
             const bgFolder = gui.addFolder('Background Color');
-            bgFolder.add(config.background, 'r', 0, 255, 1).name('Red');
-            bgFolder.add(config.background, 'g', 0, 255, 1).name('Green');
-            bgFolder.add(config.background, 'b', 0, 255, 1).name('Blue');
+            bgFolder.addColor(config, 'backgroundColor').name('Color');
 
             // Store gui reference globally for seed updates
             window.gui = gui;
