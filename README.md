@@ -17,6 +17,7 @@ conda activate r-env
 
 1. https://blog.djnavarro.net/posts/2024-12-22_art-from-code-5/
 
+```
 @online{navarro2024,
   author = {Navarro, Danielle},
   title = {Art from Code {V:} {Iterated} Function Systems},
@@ -24,6 +25,7 @@ conda activate r-env
   url = {https://blog.djnavarro.net/posts/2024-12-22_art-from-code-5/},
   langid = {en}
 }
+```
 
 2. https://keithfrost.github.io/2025-08-08-frac5.html
 
