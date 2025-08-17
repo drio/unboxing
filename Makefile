@@ -9,13 +9,19 @@ RAYLIB_WEB_LIB = $(HOME)/dev/github.com/raysan5/raylib-5.5/build_web/raylib/libr
 
 .PHONY: clean web web-serve lsp
 
-unboxing: main.c
-	$(CC) $(CFLAGS) main.c -o $@ $(LIBS)
+SOURCES = main.c color.c variants.c transforms.c chaos.c wasm.c
+OBJECTS = $(SOURCES:.c=.o)
+
+unboxing: $(OBJECTS)
+	$(CC) $(OBJECTS) -o $@ $(LIBS)
+
+%.o: %.c
+	$(CC) $(CFLAGS) -c $< -o $@
 
 # Build WebAssembly version
-web: main.c
+web: $(SOURCES)
 	mkdir -p web
-	emcc main.c $(RAYLIB_WEB_LIB) -o web/index.js \
+	emcc $(SOURCES) $(RAYLIB_WEB_LIB) -o web/index.js \
 		-g -Wall \
 		-Wno-unused-variable \
 		-s USE_GLFW=3 \
@@ -40,5 +46,5 @@ lsp:
 	bear -- make
 
 clean:
-	rm -f $(TOOL)
+	rm -f $(TOOL) $(OBJECTS)
 	rm -rf web/

@@ -13,3 +13,4 @@ original
 Rplots.pdf
 .RData
 .Rhistory
+*.o
