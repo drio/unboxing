@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Fractal Gallery</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: black;
+        }
+
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .fractal {
+            background: black;
+            border-radius: 0px;
+            padding: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        img {
+            width: 100%;
+            height: auto;
+            border-radius: 4px;
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="gallery">
+        <div class="fractal">
+            <img src="palette_0_red_to_pink.png" alt="Red to Pink">
+        </div>
+
+        <div class="fractal">
+            <img src="palette_1_blue_ocean.png" alt="Blue Ocean">
+        </div>
+
+        <div class="fractal">
+            <img src="palette_2_green_forest.png" alt="Green Forest">
+        </div>
+
+        <div class="fractal">
+            <img src="palette_3_purple_dream.png" alt="Purple Dream">
+        </div>
+
+        <div class="fractal">
+            <img src="palette_4_rainbow.png" alt="Rainbow">
+        </div>
+
+        <div class="fractal">
+            <img src="palette_5_r_default.png" alt="R Default">
+        </div>
+
+        <div class="fractal">
+            <img src="palette_6_grey.png" alt="Grey">
+        </div>
+
+        <div class="fractal">
+            <img src="palette_7_experiment.png" alt="Experiment">
+        </div>
+    </div>
+</body>
+
+</html>

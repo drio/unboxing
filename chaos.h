@@ -13,6 +13,7 @@ typedef struct {
     int width;
     int height;
     Color background;
+    const char* output_filename;
 } Config;
 
 void generate_chaos_points(Point* points, Config* cfg);

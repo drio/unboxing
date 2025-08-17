@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <time.h>
 #include <string.h>
+#include <unistd.h>
 #include "color.h"
 #include "variants.h"
 #include "transforms.h"
@@ -20,6 +21,7 @@ void print_usage(const char* program_name) {
     printf("  -p, --palette <num>      Palette number (see color.h for values)\n");
     printf("  -w, --width <num>        Image width (default: 4000)\n");
     printf("  -h, --height <num>       Image height (default: 4000)\n");
+    printf("  -o, --output <file>      Output filename (default: fractal.png)\n");
     printf("  --help                   Show this help\n");
 }
 
@@ -32,6 +34,7 @@ Config parse_args(int argc, char* argv[]) {
         .width = 4000,
         .height = 4000,
         .background = BLACK,
+        .output_filename = "fractal.png",
     };
 
     for (int i = 1; i < argc; i++) {
@@ -50,6 +53,8 @@ Config parse_args(int argc, char* argv[]) {
             config.width = atoi(argv[++i]);
         } else if ((strcmp(argv[i], "-h") == 0 || strcmp(argv[i], "--height") == 0) && i + 1 < argc) {
             config.height = atoi(argv[++i]);
+        } else if ((strcmp(argv[i], "-o") == 0 || strcmp(argv[i], "--output") == 0) && i + 1 < argc) {
+            config.output_filename = argv[++i];
         } else {
             printf("Unknown option: %s\n", argv[i]);
             print_usage(argv[0]);
@@ -69,13 +74,13 @@ int main(int argc, char* argv[]) {
 
     Point* points = malloc(cfg.iterations * sizeof(Point));
 
-    srand(time(NULL)); 
+    srand(time(NULL) ^ getpid() ^ clock()); 
     generate_chaos_points(points, &cfg);
 
     if (cfg.mode == 1) {
         run_raylib_visualization(points, cfg.iterations, &cfg);
     } else if (cfg.mode == 2) {
-        save_image(points, cfg.iterations, "fractal.png", &cfg);
+        save_image(points, cfg.iterations, cfg.output_filename, &cfg);
     } else {
         print_points(points, cfg.iterations);
     }
