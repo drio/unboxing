@@ -21,5 +21,8 @@ palette_%.png:
 generate-index:
 	./generate_index.py
 
+rsync:
+	rsync -avz -e ssh --delete --progress * atom:/data/data/unboxing
+
 clean:
 	rm -f palette_*.png index.html 
