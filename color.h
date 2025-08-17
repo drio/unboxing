@@ -14,9 +14,8 @@ typedef enum {
     PALETTE_EXPERIMENT, 
 } PaletteType;
 
-// Color functions
 Color lerp_color(Color a, Color b, float t);
 Color palette_3color(float t, Color c1, Color c2, Color c3);
-Color map_color(float layer_value, float z_value, PaletteType palette);
+Color map_color(float layer_value, float z_value, float variant_value, PaletteType palette);
 
 #endif

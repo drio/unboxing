@@ -3,12 +3,7 @@
 #include <stdint.h>
 #include <stdio.h>
 
-// Use both the transformation and the z value to compute color
-// Layer structure: Each of the 5 chaos transformations has its distinct color
-// region Z variation: Within each layer, the z values add subtle color
-// gradients and variations
-
-// Custom color constants for palettes (raylib provides basic colors like BLACK, RED, etc.)
+// Custom color constants (raylib provides basic colors like BLACK, RED, etc.)
 static const Color NAVY = {0, 0, 50, 255};
 static const Color DARK_GREEN = {0, 100, 0, 255};
 static const Color BRIGHT_GREEN = {0, 200, 50, 255};
@@ -37,8 +32,7 @@ Color palette_3color(float t, Color c1, Color c2, Color c3) {
     }
 }
 
-Color map_color(float layer_value, float z_value, PaletteType palette) {
-    // Blend layer (0-4) and z value for richer coloring
+Color map_color(float layer_value, float z_value, float variant_value, PaletteType palette) {
     float layer_t = layer_value / 4.0f;
     float z_t = (z_value + 1.0f) / 3.0f;
     if (z_t < 0) z_t = 0;
@@ -47,10 +41,12 @@ Color map_color(float layer_value, float z_value, PaletteType palette) {
     // Apply log transform to spread out clustered z values
     z_t = logf(z_t * 9.0f + 1.0f) / logf(10.0f);
 
-    // Combine layer structure with z variation
-    float t = (layer_t + z_t * 0.3f) / 1.3f;  // Layer dominates, z adds variation
+    float variant_t = variant_value / 2.0f;
+
+    // Blend: layer dominates, z adds variation, variant adds color shifts
+    float t = (layer_t + z_t * 0.3f + variant_t * 0.2f) / 1.5f;
     if (t > 1.0f) t = 1.0f;
-    
+
 
     switch(palette) {
         case PALETTE_EXPERIMENT:
