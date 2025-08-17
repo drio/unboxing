@@ -131,9 +131,9 @@
 
         // Configuration object for lil-gui
         const config = {
-            iterations: 5000000,
+            iterations: 10000000,
             layers: 7,
-            palette: 0,
+            palette: 1,
             width: 4000,
             height: 4000,
             seed: Math.floor(Math.random() * 1000000),
@@ -263,7 +263,7 @@
             gui.title('Chaos Game Generator (unboxing edition)');
 
             // Main controls
-            gui.add(config, 'iterations', 100000, 10000000, 100000).name('Iterations/Points');
+            gui.add(config, 'iterations', 100000, 15000000, 100000).name('Iterations/Points');
             gui.add(config, 'layers', 1, 20, 1).name('Layers');
             gui.add(config, 'palette', 0, 7, 1).name('Palette');
             gui.add(config, 'seed', 0, 1000000, 1).name('Seed');

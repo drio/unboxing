@@ -2,6 +2,8 @@
 
 A C (and webassembly) version of Danielle Navarro's [unboxing](https://blog.djnavarro.net/posts/2024-12-22_art-from-code-5/).
 
+See the [live demo here](https://drio.github.io/unboxing/).
+
 <div style="display: flex;">
   <img src="imgs/fractal.big.webp" width="300"/>
   <img src="imgs/fractal.png" width="300"/>
