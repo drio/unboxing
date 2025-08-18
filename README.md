@@ -4,15 +4,17 @@ A C (and webassembly) version of Danielle Navarro's [unboxing](https://blog.djna
 
 See the [live demo here](https://drio.github.io/unboxing/).
 
+<img src="imgs/demo.2x.gif"/>
+
 <div style="display: flex;">
   <img src="imgs/fractal.big.webp" width="300"/>
   <img src="imgs/fractal.png" width="300"/>
   <img src="imgs/fractal.blue.png" width="300"/>
+  <img src="imgs/fractal-blue-pink.png" width="300"/>
   <img src="imgs/palette_5_4.png" width="300"/>
   <img src="imgs/palette_4_8.png" width="300"/>
   <img src="imgs/fractal-grey-pink.png" width="300"/>
   <img src="imgs/palette_2_10.png" width="300"/>
-  <img src="imgs/fractal-blue-pink.png" width="300"/>
   <img src="imgs/fractal-white.png" width="300"/>
 </div>
 
