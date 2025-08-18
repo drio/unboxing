@@ -7,7 +7,6 @@ See the [live demo here](https://drio.github.io/unboxing/).
 <div style="display: flex;">
   <img src="imgs/fractal.big.webp" width="300"/>
   <img src="imgs/fractal.png" width="300"/>
-  <img src="imgs/fractal.r.png" width="300"/>
   <img src="imgs/fractal.blue.png" width="300"/>
   <img src="imgs/palette_5_4.png" width="300"/>
   <img src="imgs/palette_4_8.png" width="300"/>
