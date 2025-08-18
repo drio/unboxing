@@ -10,10 +10,10 @@ See the [live demo here](https://drio.github.io/unboxing/).
   <img src="imgs/fractal.blue.png" width="300"/>
   <img src="imgs/palette_5_4.png" width="300"/>
   <img src="imgs/palette_4_8.png" width="300"/>
+  <img src="imgs/fractal-grey-pink.png" width="300"/>
   <img src="imgs/palette_2_10.png" width="300"/>
   <img src="imgs/fractal-blue-pink.png" width="300"/>
-  <img src="imgs/fractal-grey-pink.png" width="300"/>
-  <img src="imgs/fratal-white.png" width="300"/>
+  <img src="imgs/fractal-white.png" width="300"/>
 </div>
 
 ### Load R env (for running the R version)
