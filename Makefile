@@ -24,12 +24,12 @@ web: $(SOURCES)
 	emcc $(SOURCES) $(RAYLIB_WEB_LIB) -o web/index.js \
 		-g -Wall \
 		-Wno-unused-variable \
-		-s USE_GLFW=3 \
 		-s TOTAL_MEMORY=1GB \
+		-s USE_GLFW=3 \
 		-s FORCE_FILESYSTEM=1 \
+		-s MODULARIZE=1 \
 		-s EXPORTED_FUNCTIONS='["_main","_generate_fractal_pixels","_free_pixel_data"]' \
 		-s EXPORTED_RUNTIME_METHODS='["HEAPU8"]' \
-		-s MODULARIZE=1 \
 		-s EXPORT_NAME='WasmModule' \
 		-DPLATFORM_WEB \
 		-I $(HOME)/dev/github.com/raysan5/raylib-5.5/src
