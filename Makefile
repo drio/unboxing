@@ -1,5 +1,5 @@
 CC = clang
-CFLAGS = -Wall -Wno-unused-variable -std=c99 -I$(HOME)/dev/github.com/raysan5/raylib-5.5/src
+CFLAGS = -march=native -O3 -ffast-math -Wall -Wno-unused-variable -std=c99 -I$(HOME)/dev/github.com/raysan5/raylib-5.5/src
 LIBS = -L$(HOME)/dev/github.com/raysan5/raylib-5.5/src -lraylib -lm -lpthread -ldl -lrt -lX11
 TOOL = unboxing
 
