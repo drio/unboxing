@@ -1,5 +1,7 @@
 # Unboxing
 
+[![Deploy to GitHub Pages](https://github.com/drio/unboxing/actions/workflows/pages.yml/badge.svg)](https://github.com/drio/unboxing/actions/workflows/pages.yml)
+
 A C (and webassembly) version of Danielle Navarro's [unboxing](https://blog.djnavarro.net/posts/2024-12-22_art-from-code-5/).
 
 See the [live demo here](https://drio.github.io/unboxing/) for the webassembly version.
