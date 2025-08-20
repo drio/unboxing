@@ -2,6 +2,8 @@
 
 A C (and webassembly) version of Danielle Navarro's [unboxing](https://blog.djnavarro.net/posts/2024-12-22_art-from-code-5/).
 
+See the [live demo here](https://drio.github.io/unboxing/) for the webassembly version.
+
 ### Usage
 
 To run the c standalone version (c compiler necessary - I use clang).
@@ -35,7 +37,6 @@ make -j12 COUNT=12 # 12 images per pallete (run 12 targets in parallel)
 # And open the ./index.html with your browser
 ```
 
-See the [live demo here](https://drio.github.io/unboxing/) for the webassembly version.
 
 <img src="imgs/demo.2x.gif"/>
 
