@@ -33,9 +33,9 @@ Serving HTTP on 0.0.0.0 port 8787 (http://0.0.0.0:8787/) ...
 You can also generate a gallery:
 
 ```sh
-cd gallery
-make clean 
-make -j12 COUNT=12 # 12 images per pallete (run 12 targets in parallel)
+$ cd gallery
+$ make clean 
+$ make -j12 COUNT=12 # 12 images per pallete (run 12 targets in parallel)
 # And open the ./index.html with your browser
 ```
 
