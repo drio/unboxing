@@ -11,7 +11,7 @@ See the [live demo here](https://drio.github.io/unboxing/) for the webassembly v
 To run the c standalone version (c compiler necessary - I use clang).
 
 ```sh
-$ make clean 
+$ make 
 ...
 $ ./unboxing 
 create_fractal_image(): out screen points = 342298
